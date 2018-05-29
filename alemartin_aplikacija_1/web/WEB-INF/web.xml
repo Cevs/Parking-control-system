@@ -5,8 +5,12 @@
         <param-value>Development</param-value>
     </context-param>
     <context-param>
-        <param-name>konfiguracija</param-name>
+        <param-name>baza_konfiguracija</param-name>
         <param-value>NWTiS.db.config.xml</param-value>
+    </context-param>
+    <context-param>
+        <param-name>aplikacija_konfiguracija</param-name>
+        <param-value>NWTiS.app.config.xml</param-value>
     </context-param>
     <listener>
         <description>ServletContextListener</description>
