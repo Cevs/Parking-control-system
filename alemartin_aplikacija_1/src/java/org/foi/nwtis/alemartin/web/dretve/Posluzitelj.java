@@ -9,20 +9,16 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.lang.annotation.ElementType;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import javax.servlet.ServletContext;
 import org.foi.nwtis.alemartin.konfiguracije.Konfiguracija;
 import org.foi.nwtis.alemartin.web.baza.BazaPodataka;
 import org.foi.nwtis.alemartin.web.slusaci.SlusacAplikacije;
+import org.foi.nwtis.alemartin.web.utils.KomandaUtils;
 
 /**
  *
@@ -54,16 +50,27 @@ public class Posluzitelj extends Thread {
                 //InputStream input = socket.getInputStream(); //Procitaj komandu sa socketa
                 //OutputStream output = socket.getOutputStream(); //Vrati odgovor
                 //String poruka = procitajSocket(input);
-                String komanda = "KORISNIK alenmartincevic; LOZINKA martincevicalen; DODAJ 'martincevic' 'alen';";
+                String komanda = "KORISNIK alenmartincevic; LOZINKA martincevicalen; DODAJ 'martincevic' 'alen';";         
                 if (autentificirajKorisnika(komanda)) {
-                    ObradaKomande obradaKomande = new ObradaKomande(komanda, null); //umjesto null stavit socket 
-                    Thread dretva = new Thread(obradaKomande);
-                    dretva.start();
+                    String podKomanda  = KomandaUtils.INSTANCE.vratiPodkomandu(komanda, 4);
+                    if (podKomanda.length() != 0) { //Ako novo dobiveno polje komandi ima jos elementa posaljji na obradu
+                        ObradaKomande obradaKomande = new ObradaKomande(podKomanda, null); //umjesto null stavit socket 
+                        Thread dretva = new Thread(obradaKomande);
+                        dretva.start();
+                    } else {
+                        //Komanda ne sadrzi nista osim parametara za autentifikaciju
+                        String odg = "OK 10;";
+                        //output.write(odg.getBytes());
+                        //output.flush();
+                        //socket.shutdownOutput();
+                    }
+
                 } else {
+                    String odg = "ERR 11; Neuspjela autentifikacija";
                     //output.write(odg.getBytes());
                     //output.flush();
                     //socket.shutdownOutput();
-                    System.out.println("Neuspjela autentifikacija");
+                    System.out.println(odg);
                 }
                 sleep(1000 * 20); //Spjavaj 20 sekundi
             }
@@ -72,21 +79,6 @@ public class Posluzitelj extends Thread {
         }
     }
 
-    private String izvrsiKomandu(String komanda) throws NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-        String kosturKomande = "KORISNIK [aA-zZ0-9_\\\\-]*; LOZINKA [aA-zZ0-9_\\\\-]*; "
-                + "(DODAJ (\"|')[aA-zZ]*(\"|') (\"|')[aA-zZ]*(\"|')|PAUZA|KRENI|PASIVNO|AKTIVNO|STANI|STANJE|LISTAJ);";
-        Pattern uzorak = Pattern.compile(kosturKomande);
-        Matcher matcher = uzorak.matcher(komanda);
-        if (!matcher.matches()) {
-            return "Komanda nije ispravna";
-        }
-        String akcija = komanda.split(" ")[4].trim().toLowerCase();
-        Method metoda = this.getClass().getDeclaredMethod(akcija);
-        metoda.setAccessible(true);
-        return ((String)metoda.invoke(this));
-    }
-
-    
     private String procitajSocket(InputStream input) throws IOException {
         BufferedReader in = new BufferedReader(new InputStreamReader(input));
         String readLine;
@@ -97,20 +89,22 @@ public class Posluzitelj extends Thread {
         return poruka;
     }
 
-    private boolean autentificirajKorisnika(String poruka) {
-        String[] komandaArray = poruka.split(" "); //Splitaj po razmaku
-        String korisnickoIme = komandaArray[1].trim().replace(";", "");
-        String lozinka = komandaArray[3].trim().replace(";", "");
-        String sql = "SELECT *FROM korisnici WHERE korisnicko_ime = '" + korisnickoIme + "' AND lozinka = '" + lozinka + "';";
-        try (
-                Connection con = BazaPodataka.INSTANCE.getConnection();
-                Statement stmt = con.createStatement();
-                ResultSet rs = stmt.executeQuery(sql)) {
-            if (rs.next()) {
-                return true;
+    private boolean autentificirajKorisnika(String komanda) {   
+        if (KomandaUtils.INSTANCE.provjeriKomanduAutorizacije(komanda)) {
+            String[] komandaArray = KomandaUtils.INSTANCE.rastaviKomandu(komanda);
+            String korisnickoIme = komandaArray[1];
+            String lozinka = komandaArray[3];
+            String sql = "SELECT *FROM korisnici WHERE korisnicko_ime = '" + korisnickoIme + "' AND lozinka = '" + lozinka + "';";
+            try (
+                    Connection con = BazaPodataka.INSTANCE.getConnection();
+                    Statement stmt = con.createStatement();
+                    ResultSet rs = stmt.executeQuery(sql)) {
+                if (rs.next()) {
+                    return true;
+                }
+            } catch (Exception ex) {
+                System.out.println(ex.getMessage());
             }
-        } catch (Exception ex) {
-            System.out.println(ex.getMessage());
         }
         return false;
     }

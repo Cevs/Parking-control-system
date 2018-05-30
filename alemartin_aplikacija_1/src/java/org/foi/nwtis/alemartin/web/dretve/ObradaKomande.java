@@ -9,10 +9,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.lang.reflect.Method;
 import java.net.Socket;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import org.foi.nwtis.alemartin.web.utils.KomandaUtils;
 
 /**
  *
@@ -29,17 +26,13 @@ public class ObradaKomande implements Runnable {
     }
 
     @Override
-    public void run() {
-        String kosturKomande = "KORISNIK [aA-zZ0-9_\\\\-]*; LOZINKA [aA-zZ0-9_\\\\-]*; "
-                + "(DODAJ (\"|')[aA-zZ]*(\"|') (\"|')[aA-zZ]*(\"|')|PAUZA|KRENI|PASIVNO|AKTIVNO|STANI|STANJE|LISTAJ);";
-        Pattern uzorak = Pattern.compile(kosturKomande);
-        Matcher matcher = uzorak.matcher(komanda);
-
+    public void run() {     
         try {
-            if (!matcher.matches()) {
+            if (!KomandaUtils.INSTANCE.provjeriPodKomanduKorisnik(komanda)) {
                 vratiOdgovorKlijentu("Komanda nije ispravna");
             }
-            String akcija = komanda.split(" ")[4].trim().toLowerCase();
+            String[] komandaArray = KomandaUtils.INSTANCE.rastaviKomandu(komanda);
+            String akcija = komandaArray[0].toLowerCase();
             Method metoda = this.getClass().getDeclaredMethod(akcija);
             metoda.setAccessible(true);
             String odovor = (String)metoda.invoke(this);
