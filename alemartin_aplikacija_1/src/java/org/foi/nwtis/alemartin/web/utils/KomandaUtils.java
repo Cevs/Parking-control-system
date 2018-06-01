@@ -15,8 +15,8 @@ import java.util.regex.Pattern;
  */
 public class KomandaUtils {
     private static final String SPLIT_REGEX = " ";
-    private static final String kosturPodKomandeKorisnik = "(DODAJ (\"|')[aA-zZ]*(\"|') (\"|')[aA-zZ]*(\"|')|PAUZA|KRENI|PASIVNO|AKTIVNO|STANI|STANJE|LISTAJ);";
-    private static final String kosturKomandeAutorizacije = "KORISNIK [aA-zZ0-9]*; LOZINKA [aA-zZ0-9]*; [aA-zZ0-9;'\" ]*";
+    private static final String KOSTUR_POD_KOMANDE_KORISNIK = "(DODAJ (\"|')[aA-zZ]*(\"|') (\"|')[aA-zZ]*(\"|')|PAUZA|KRENI|PASIVNO|AKTIVNO|STANI|STANJE|LISTAJ);";
+    private static final String KOSTUR_KOMANDE_AUTORIZACIJE = "KORISNIK [aA-zZ0-9]*; LOZINKA [aA-zZ0-9]*; [aA-zZ0-9;'\" ]*";
     public final static KomandaUtils INSTANCE = new KomandaUtils();
     private KomandaUtils(){}
       
@@ -57,7 +57,7 @@ public class KomandaUtils {
     }
     
     public boolean provjeriPodKomanduKorisnik(String komanda){
-        Pattern uzorak = Pattern.compile(kosturPodKomandeKorisnik);
+        Pattern uzorak = Pattern.compile(KOSTUR_POD_KOMANDE_KORISNIK);
         Matcher matcher = uzorak.matcher(komanda);
         if(matcher.matches()){
             return true;
@@ -66,11 +66,19 @@ public class KomandaUtils {
     }
     
     public boolean provjeriKomanduAutorizacije(String komanda){
-        Pattern uzorak = Pattern.compile(kosturKomandeAutorizacije);
+        Pattern uzorak = Pattern.compile(KOSTUR_KOMANDE_AUTORIZACIJE);
         Matcher matcher = uzorak.matcher(komanda);
         if(matcher.matches()){
             return true;
         }
         return false;
+    }
+    
+    public String odrediVrstuKomande(String komanda){
+        if(komanda.contains("GRUPA")){
+            return "grupa";
+        }else{
+            return "posluzitelj";
+        }
     }
 }

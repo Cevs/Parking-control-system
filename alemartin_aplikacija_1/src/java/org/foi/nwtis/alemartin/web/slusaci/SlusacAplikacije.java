@@ -16,7 +16,7 @@ import org.foi.nwtis.alemartin.konfiguracije.KonfiguracijaApstraktna;
 import org.foi.nwtis.alemartin.konfiguracije.NeispravnaKonfiguracija;
 import org.foi.nwtis.alemartin.konfiguracije.NemaKonfiguracije;
 import org.foi.nwtis.alemartin.konfiguracije.bp.BP_Konfiguracija;
-import org.foi.nwtis.alemartin.web.dretve.Posluzitelj;
+import org.foi.nwtis.alemartin.socket.PosluziteljSocketSlusac;
 
 /**
  * Web application lifecycle listener.
@@ -26,7 +26,7 @@ import org.foi.nwtis.alemartin.web.dretve.Posluzitelj;
 public class SlusacAplikacije implements ServletContextListener {
 
     private PreuzmiMeteoPodatke preuzmiMeteoPodatke = null;
-    private Posluzitelj posluzitelj = null;
+    private PosluziteljSocketSlusac posluzitelj = null;
     private static ServletContext servletContext;
     @Override
     public void contextInitialized(ServletContextEvent sce){      
@@ -44,15 +44,19 @@ public class SlusacAplikacije implements ServletContextListener {
         }
         
         //Start thread
-        posluzitelj = new Posluzitelj();
-        preuzmiMeteoPodatke = new PreuzmiMeteoPodatke();
-        preuzmiMeteoPodatke.start();
+        posluzitelj = new PosluziteljSocketSlusac();
+        //preuzmiMeteoPodatke = new PreuzmiMeteoPodatke();
+       // preuzmiMeteoPodatke.start();
         posluzitelj.start();
         
     }
 
     @Override
     public void contextDestroyed(ServletContextEvent sce) {
+        ServletContext sc = sce.getServletContext();
+        sc.removeAttribute("konfiguracija_baze");
+        sc.removeAttribute("konfiguracija_aplikacije");
+        posluzitelj.close();
     }
 
     public static ServletContext getServletContext() {

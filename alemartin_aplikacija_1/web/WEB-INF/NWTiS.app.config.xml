@@ -5,7 +5,8 @@
     <entry key="intervalDretveZaMeteoPodatke">60</entry>
     <entry key="apikey">79dc08dd28b93b4302fdd35c49074084</entry>
     <entry key="gmapikey">AIzaSyDttYKq2feyFg-ZMk3NnXf1IiuDFd0ouNo</entry>
-    <entry key="port">61613</entry>
+    <entry key="port">8089</entry>
     <entry key="maks.broj.zahtjeva.cekanje">5</entry>
-    <entry key="maks.broj.radnih.dretvi">5</entry> 
+    <entry key="maks.broj.radnih.dretvi">5</entry>
+    <entry key="maks.broj.zahtjeva.cekanje">5</entry> 
 </properties>
