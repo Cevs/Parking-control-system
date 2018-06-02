@@ -18,7 +18,7 @@ import org.foi.nwtis.alemartin.web.slusaci.SlusacAplikacije;
 
 /**
  *
- * @author TOSHIBA
+ * @author alemartin
  */
 public class PosluziteljSocketSlusac extends Thread {
 
@@ -91,5 +91,9 @@ public class PosluziteljSocketSlusac extends Thread {
                 Logger.getLogger(PosluziteljSocketSlusac.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
+    }
+    
+    public static void ugasiAplikaciju(){
+        System.exit(0);
     }
 }

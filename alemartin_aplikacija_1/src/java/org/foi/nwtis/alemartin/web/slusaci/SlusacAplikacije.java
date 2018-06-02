@@ -45,8 +45,8 @@ public class SlusacAplikacije implements ServletContextListener {
         
         //Start thread
         posluzitelj = new PosluziteljSocketSlusac();
-        //preuzmiMeteoPodatke = new PreuzmiMeteoPodatke();
-       // preuzmiMeteoPodatke.start();
+        preuzmiMeteoPodatke = new PreuzmiMeteoPodatke();
+        preuzmiMeteoPodatke.start();
         posluzitelj.start();
         
     }
@@ -55,7 +55,7 @@ public class SlusacAplikacije implements ServletContextListener {
     public void contextDestroyed(ServletContextEvent sce) {
         ServletContext sc = sce.getServletContext();
         sc.removeAttribute("konfiguracija_baze");
-        sc.removeAttribute("konfiguracija_aplikacije");
+        sc.removeAttribute("konfiguracija_aplikacije");       
         posluzitelj.close();
     }
 
