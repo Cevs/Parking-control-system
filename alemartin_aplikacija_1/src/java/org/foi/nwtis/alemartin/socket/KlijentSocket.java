@@ -31,6 +31,8 @@ import javax.json.JsonObjectBuilder;
 import org.foi.nwtis.alemartin.web.baza.BazaPodataka;
 import org.foi.nwtis.alemartin.web.dretve.PreuzmiMeteoPodatke;
 import org.foi.nwtis.alemartin.web.utils.KomandaUtils;
+import org.foi.nwtis.alemartin.ws.klijenti.ParkiranjeWSKlijenti;
+import org.foi.nwtis.alemartin.ws.klijenti.StatusKorisnika;
 
 /**
  *
@@ -219,13 +221,13 @@ public class KlijentSocket implements Runnable {
     }
 
     private String stanje() {
-        if(PosluziteljSocketSlusac.isPauza() && !PreuzmiMeteoPodatke.isRadi()){
+        if (PosluziteljSocketSlusac.isPauza() && !PreuzmiMeteoPodatke.isRadi()) {
             return "OK 14;";
         }
-        if(PosluziteljSocketSlusac.isPauza() && PreuzmiMeteoPodatke.isRadi()){
+        if (PosluziteljSocketSlusac.isPauza() && PreuzmiMeteoPodatke.isRadi()) {
             return "OK 13;";
         }
-        if(!PosluziteljSocketSlusac.isPauza() && !PreuzmiMeteoPodatke.isRadi()){
+        if (!PosluziteljSocketSlusac.isPauza() && !PreuzmiMeteoPodatke.isRadi()) {
             return "OK 12;";
         }
         return "OK 11;";
@@ -234,26 +236,80 @@ public class KlijentSocket implements Runnable {
     private String listaj() {
         String sql = "SELECT *FROM korisnici";
         JsonArrayBuilder jsonArrayKorisnici = Json.createArrayBuilder();
-        try(Connection conn = BazaPodataka.INSTANCE.getConnection();
+        try (Connection conn = BazaPodataka.INSTANCE.getConnection();
                 Statement stmt = conn.createStatement();
-                ResultSet rs = stmt.executeQuery(sql))
-        {
-            if(!rs.next()){
+                ResultSet rs = stmt.executeQuery(sql)) {
+            if (!rs.next()) {
                 return " ERR 17;";
             }
-            do{
+            do {
                 JsonObjectBuilder jsonKorisnik = Json.createObjectBuilder();
                 jsonKorisnik.add("id", rs.getInt("id"));
                 jsonKorisnik.add("ki", rs.getString("korisnicko_ime"));
                 jsonKorisnik.add("prezime", rs.getString("prezime"));
-                jsonKorisnik.add("ime", rs.getString("ime"));              
+                jsonKorisnik.add("ime", rs.getString("ime"));
                 //Treba li lozinka ? 
                 jsonArrayKorisnici.add(jsonKorisnik);
-            }while(rs.next());
+            } while (rs.next());
         } catch (SQLException ex) {
             Logger.getLogger(KlijentSocket.class.getName()).log(Level.SEVERE, null, ex);
             return " ERR 17;";
         }
-        return "OK 10; "+jsonArrayKorisnici.build().toString();
+        return "OK 10; " + jsonArrayKorisnici.build().toString();
+    }
+
+    private String grupaDodaj() {
+        StatusKorisnika statusGrupe = ParkiranjeWSKlijenti.dajStatusGrupe(korisnickoIme, lozinka);
+        if (statusGrupe.name().equals("NEPOSTOJI")) {
+            boolean b = ParkiranjeWSKlijenti.registrirajGrupu(korisnickoIme, lozinka);
+            return "OK 20;";
+        }
+        return "ERR 20;";
+    }
+
+    private String grupaPrekid() {
+        StatusKorisnika statusGrupe = ParkiranjeWSKlijenti.dajStatusGrupe(korisnickoIme, lozinka);
+        if (statusGrupe.name().equals("NEPOSTOJI")) {
+            return "ERR 21";
+        }
+        boolean b = ParkiranjeWSKlijenti.deregistrirajGrupu(korisnickoIme, lozinka);
+        return "OK 20;";
+    }
+
+    private String grupaKreni() {
+        StatusKorisnika statusGrupe = ParkiranjeWSKlijenti.dajStatusGrupe(korisnickoIme, lozinka);
+        if (statusGrupe.name().equals("AKTIVNA")) {
+            return "ERR 22;";
+        } else if (statusGrupe.name().equals("NEPOSTOJI")) {
+            return "ERR 21;";
+        } else {
+            boolean b = ParkiranjeWSKlijenti.aktivirajGrupu(korisnickoIme, lozinka);
+            return "OK 20;";
+        }
+
+    }
+
+    private String grupaPauza() {
+        StatusKorisnika statusGrupe = ParkiranjeWSKlijenti.dajStatusGrupe(korisnickoIme, lozinka);
+        if (statusGrupe.name().equals("NEAKTIVAN")) {
+            return "ERR 23;";
+        } else if (statusGrupe.name().equals("NEPOSTOJI")) {
+            return "ERR 21;";
+        } else {
+            ParkiranjeWSKlijenti.blokirajGrupu(korisnickoIme, lozinka);
+            return "OK 20;";
+        }
+
+    }
+
+    private String grupaStanje() {
+        StatusKorisnika statusGrupe = ParkiranjeWSKlijenti.dajStatusGrupe(korisnickoIme, lozinka);
+        if (statusGrupe.name().equals("AKTIVNA")) {
+            return "OK 21";
+        } else if (statusGrupe.name().equals("BLOKIRAN")) {
+            return "OK 22;";
+        } else {
+            return "ERR 21;";
+        }
     }
 }

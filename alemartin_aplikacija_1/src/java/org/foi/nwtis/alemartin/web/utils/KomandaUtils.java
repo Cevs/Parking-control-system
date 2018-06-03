@@ -16,7 +16,9 @@ import java.util.regex.Pattern;
 public class KomandaUtils {
 
     private static final String SPLIT_REGEX = " ";
-    private static final String KOSTUR_KOMANDE = "KORISNIK [aA-žŽ0-9]*; LOZINKA [aA-žŽ0-9]*; ((DODAJ (\"|')[aA-žŽ]*(\"|') (\"|')[aA-žŽ]*(\"|'))|((|GRUPA )(PAUZA|KRENI|PASIVNO|AKTIVNO|STANI|STANJE|LISTAJ)));";
+    private static final String KOSTUR_KOMANDE = "KORISNIK [aA-žŽ0-9]*; LOZINKA [aA-žŽ0-9]*; "
+            + "((DODAJ (\"|')[aA-žŽ]*(\"|') (\"|')[aA-žŽ]*(\"|'))|"
+            + "((|GRUPA )(DODAJ|PREKID|PAUZA|KRENI|PASIVNO|AKTIVNO|STANI|STANJE|LISTAJ)));";
     public final static KomandaUtils INSTANCE = new KomandaUtils();
 
     private KomandaUtils() {
