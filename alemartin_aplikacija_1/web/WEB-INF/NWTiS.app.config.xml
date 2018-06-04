@@ -8,5 +8,16 @@
     <entry key="port">8089</entry>
     <entry key="maks.broj.zahtjeva.cekanje">5</entry>
     <entry key="maks.broj.radnih.dretvi">5</entry>
-    <entry key="maks.broj.zahtjeva.cekanje">5</entry> 
+    <entry key="maks.broj.zahtjeva.cekanje">5</entry>
+    <entry key="mail.server">127.0.0.1</entry>
+    <entry key="mail.imap.port">143</entry>
+    <entry key="mail.sender">servis@nwtis.nastava.foi.hr</entry>
+    <entry key="mail.receiver">admin@nwtis.nastava.foi.hr</entry>
+    <entry key="mail.passwordThread">123456</entry>
+    <entry key="mail.timeSecThreadCycle">60</entry>
+    <entry key="mail.numMessagesToRead">10</entry>
+    <entry key="mail.attachmentFilename">NWTiS_privitak.json</entry>
+    <entry key="mail.subjectEmail">IOT poruka</entry>
+    <entry key="mail.numMessagesToShow">7</entry>
+    <entry key="mail.numLogItemsToShow">7</entry> 
 </properties>

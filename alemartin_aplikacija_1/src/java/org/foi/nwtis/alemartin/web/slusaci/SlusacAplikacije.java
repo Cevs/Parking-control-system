@@ -8,6 +8,7 @@ package org.foi.nwtis.alemartin.web.slusaci;
 import org.foi.nwtis.alemartin.web.dretve.PreuzmiMeteoPodatke;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.annotation.PostConstruct;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
@@ -17,6 +18,7 @@ import org.foi.nwtis.alemartin.konfiguracije.NeispravnaKonfiguracija;
 import org.foi.nwtis.alemartin.konfiguracije.NemaKonfiguracije;
 import org.foi.nwtis.alemartin.konfiguracije.bp.BP_Konfiguracija;
 import org.foi.nwtis.alemartin.socket.PosluziteljSocketSlusac;
+import org.foi.nwtis.alemartin.utils.Email;
 
 /**
  * Web application lifecycle listener.
@@ -28,10 +30,11 @@ public class SlusacAplikacije implements ServletContextListener {
     private PreuzmiMeteoPodatke preuzmiMeteoPodatke = null;
     private PosluziteljSocketSlusac posluzitelj = null;
     private static ServletContext servletContext;
+
     @Override
-    public void contextInitialized(ServletContextEvent sce){      
+    public void contextInitialized(ServletContextEvent sce) {
         try {
-            servletContext = sce.getServletContext();
+             servletContext = sce.getServletContext();
             String putanja = servletContext.getRealPath("/WEB-INF") + java.io.File.separator;
             String bazaDatoteka = servletContext.getInitParameter("baza_konfiguracija");
             String aplikacijaDatoteka = servletContext.getInitParameter("aplikacija_konfiguracija");
@@ -42,26 +45,24 @@ public class SlusacAplikacije implements ServletContextListener {
         } catch (NemaKonfiguracije | NeispravnaKonfiguracija ex) {
             Logger.getLogger(SlusacAplikacije.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+
         //Start thread
         posluzitelj = new PosluziteljSocketSlusac();
         preuzmiMeteoPodatke = new PreuzmiMeteoPodatke();
         preuzmiMeteoPodatke.start();
         posluzitelj.start();
-        
     }
-
+    
     @Override
     public void contextDestroyed(ServletContextEvent sce) {
         ServletContext sc = sce.getServletContext();
         sc.removeAttribute("konfiguracija_baze");
-        sc.removeAttribute("konfiguracija_aplikacije");       
+        sc.removeAttribute("konfiguracija_aplikacije");
         posluzitelj.close();
     }
 
     public static ServletContext getServletContext() {
         return servletContext;
     }
-    
-    
+
 }

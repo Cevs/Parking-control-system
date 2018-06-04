@@ -5,20 +5,12 @@
  */
 package org.foi.nwtis.alemartin.web.dretve;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.net.ServerSocket;
-import java.net.Socket;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.ServletContext;
@@ -26,7 +18,7 @@ import org.foi.nwtis.alemartin.konfiguracije.Konfiguracija;
 import org.foi.nwtis.alemartin.rest.klijenti.Lokacija;
 import org.foi.nwtis.alemartin.rest.klijenti.MeteoPodaci;
 import org.foi.nwtis.alemartin.rest.klijenti.OWMKlijent;
-import org.foi.nwtis.alemartin.web.baza.BazaPodataka;
+import org.foi.nwtis.alemartin.utils.BazaPodataka;
 import org.foi.nwtis.alemartin.web.podaci.Parkiraliste;
 import org.foi.nwtis.alemartin.web.slusaci.SlusacAplikacije;
 

@@ -10,10 +10,12 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.ServletContext;
 import org.foi.nwtis.alemartin.konfiguracije.Konfiguracija;
+import org.foi.nwtis.alemartin.utils.Email;
 import org.foi.nwtis.alemartin.web.slusaci.SlusacAplikacije;
 
 /**
@@ -28,6 +30,7 @@ public class PosluziteljSocketSlusac extends Thread {
     private static int port;
     private static Konfiguracija konfig;
     private boolean radi;
+    private static int emailId;
 
     public static boolean pauza = false;
 
@@ -40,6 +43,8 @@ public class PosluziteljSocketSlusac extends Thread {
         port = Integer.parseInt(konfig.dajPostavku("port"));
         radi = true;
         nasilnoGasenjeServera();
+        emailId = 0;
+        Email email = new Email();
         super.start();
     }
 
@@ -96,4 +101,9 @@ public class PosluziteljSocketSlusac extends Thread {
     public static void ugasiAplikaciju(){
         System.exit(0);
     }
+
+    public static synchronized int getAndIncrementeEmailId() {
+        return emailId++;
+    }
+
 }

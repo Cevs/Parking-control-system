@@ -6,7 +6,6 @@
 package org.foi.nwtis.alemartin.socket;
 
 import java.io.BufferedReader;
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
@@ -19,8 +18,10 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
@@ -28,9 +29,10 @@ import java.util.logging.Logger;
 import javax.json.Json;
 import javax.json.JsonArrayBuilder;
 import javax.json.JsonObjectBuilder;
-import org.foi.nwtis.alemartin.web.baza.BazaPodataka;
+import org.foi.nwtis.alemartin.utils.BazaPodataka;
+import org.foi.nwtis.alemartin.utils.Email;
 import org.foi.nwtis.alemartin.web.dretve.PreuzmiMeteoPodatke;
-import org.foi.nwtis.alemartin.web.utils.KomandaUtils;
+import org.foi.nwtis.alemartin.utils.KomandaUtils;
 import org.foi.nwtis.alemartin.ws.klijenti.ParkiranjeWSKlijenti;
 import org.foi.nwtis.alemartin.ws.klijenti.StatusKorisnika;
 
@@ -48,7 +50,7 @@ public class KlijentSocket implements Runnable {
     private static final List<String> KORISNICKI_ZAHTJEVI = Arrays.asList("dodaj", "pasivno", "aktivno", "listaj");
     private static Method metoda;
     private static AtomicBoolean radi = new AtomicBoolean(true);
-
+    
     public KlijentSocket(Socket klijetSocket) {
         this.klijetSocket = klijetSocket;
     }
@@ -75,18 +77,18 @@ public class KlijentSocket implements Runnable {
     }
 
     private void dohvatiParametreKomande(String komanda) {
-        korisnickoIme = korisnickoIme = KomandaUtils.INSTANCE.dohvatiKorisnickoIme(komanda);
-        lozinka = KomandaUtils.INSTANCE.dohvatiLozinku(komanda);
-        tipKomande = KomandaUtils.INSTANCE.odrediVrstuKomande(komanda);
+        korisnickoIme = korisnickoIme = KomandaUtils.dohvatiKorisnickoIme(komanda);
+        lozinka = KomandaUtils.dohvatiLozinku(komanda);
+        tipKomande = KomandaUtils.odrediVrstuKomande(komanda);
         if (tipKomande.equals("posluzitelj")) {
-            akcija = KomandaUtils.INSTANCE.dohvatiAkcijuPosluzitelja(komanda);
+            akcija = KomandaUtils.dohvatiAkcijuPosluzitelja(komanda);
         } else {
-            akcija = KomandaUtils.INSTANCE.dohvatiAkcijuGrupe(komanda);
+            akcija = KomandaUtils.dohvatiAkcijuGrupe(komanda);
         }
     }
 
     private String obradiKomandu(String komanda) throws NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-        if (!KomandaUtils.INSTANCE.provjeriKomandu(komanda)) {
+        if (!KomandaUtils.provjeriKomandu(komanda)) {
             return "Neispravna komanda";
         }
         dohvatiParametreKomande(komanda);
@@ -96,7 +98,7 @@ public class KlijentSocket implements Runnable {
             return "";
         }
 
-        String podKomanda = KomandaUtils.INSTANCE.vratiPodkomandu(komanda, 4);
+        String podKomanda = KomandaUtils.vratiPodkomandu(komanda, 4);
         if (akcija.equals("dodaj")) {
             metoda = this.getClass().getDeclaredMethod(akcija, String.class);
             metoda.setAccessible(true);
@@ -111,15 +113,35 @@ public class KlijentSocket implements Runnable {
             return "OK 10";     //Komanda je sadržavala samo autorizacijske podatke
         }
 
-        BazaPodataka.INSTANCE.UpisDnevnika(KomandaUtils.INSTANCE.dohvatiKorisnickoIme(komanda), "socket", komanda);
-        //TODO poslati email
-
+        BazaPodataka.INSTANCE.UpisDnevnika(KomandaUtils.dohvatiKorisnickoIme(komanda), "socket", komanda);               
         metoda = this.getClass().getDeclaredMethod(akcija);
         metoda.setAccessible(true);
-        return (String) metoda.invoke(this);
+        String odgovor = (String) metoda.invoke(this);
+        
+        //Send email
+        if(tipKomande.equals("posluzitelj")){                 
+            Email.posaljiEmail(sastaviPoruku(komanda));
+        }
+        
+        return odgovor;
 
     }
-
+    
+    private String sastaviPoruku(String komanda){
+        int emailId = PosluziteljSocketSlusac.getAndIncrementeEmailId();
+        
+        JsonObjectBuilder jsonEmail = Json.createObjectBuilder();
+        jsonEmail.add("id", emailId);
+        jsonEmail.add("komanda", KomandaUtils.izbaciLozinku(komanda));
+        
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss.zzz");
+        Date date = new Date();
+        
+        jsonEmail.add("vrijeme", sdf.format(date));
+        return jsonEmail.build().toString();
+    }
+    
+    
     private boolean autentificirajKorisnika(String komanda) {
         String sql = "SELECT *FROM korisnici WHERE korisnicko_ime = ? AND lozinka = ?;";
         try (
@@ -138,7 +160,7 @@ public class KlijentSocket implements Runnable {
     }
 
     public String dodaj(String podKomanda) {
-        String[] podKomandaArray = KomandaUtils.INSTANCE.rastaviKomandu(podKomanda);
+        String[] podKomandaArray = KomandaUtils.rastaviKomandu(podKomanda);
         String prezime = podKomandaArray[1];
         String ime = podKomandaArray[2];
         if (!korisnikPostoji(korisnickoIme)) {
