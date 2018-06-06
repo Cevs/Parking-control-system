@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jax-ws xmlns="http://www.netbeans.org/ns/jax-ws/1">
-  <services/>
+  <services>
+    <service name="GeoMeteoWS">
+      <implementation-class>org.foi.nwtis.alemartin.ws.serveri.GeoMeteoWS</implementation-class>
+    </service>
+  </services>
   <clients>
     <client name="Parkiranje">
       <wsdl-url>http://nwtis.foi.hr:8080/NWTiS_2018/Parkiranje?wsdl</wsdl-url>
@@ -39,4 +43,5 @@
       </wsimport-options>
     </client>
   </clients>
+  <jsr109>false</jsr109>
 </jax-ws>

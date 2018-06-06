@@ -105,7 +105,7 @@ public class KlijentSocket implements Runnable {
             return (String) metoda.invoke(this, (String) podKomanda);
         }
 
-        if (!autentificirajKorisnika(komanda)) {
+        if (!BazaPodataka.autentificirajKorisnika(korisnickoIme, lozinka)) {
             return "ERR 11";    //Neuspjela autentifikacija
         }
 
@@ -113,7 +113,7 @@ public class KlijentSocket implements Runnable {
             return "OK 10";     //Komanda je sadržavala samo autorizacijske podatke
         }
 
-        BazaPodataka.INSTANCE.UpisDnevnika(KomandaUtils.dohvatiKorisnickoIme(komanda), "socket", komanda);               
+        BazaPodataka.UpisDnevnika(KomandaUtils.dohvatiKorisnickoIme(komanda), "socket", komanda);               
         metoda = this.getClass().getDeclaredMethod(akcija);
         metoda.setAccessible(true);
         String odgovor = (String) metoda.invoke(this);
@@ -141,24 +141,6 @@ public class KlijentSocket implements Runnable {
         return jsonEmail.build().toString();
     }
     
-    
-    private boolean autentificirajKorisnika(String komanda) {
-        String sql = "SELECT *FROM korisnici WHERE korisnicko_ime = ? AND lozinka = ?;";
-        try (
-                Connection conn = BazaPodataka.INSTANCE.getConnection();
-                PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setString(1, korisnickoIme);
-            ps.setString(2, lozinka);
-            ResultSet rs = ps.executeQuery();
-            if (rs.next()) {
-                return true;
-            }
-        } catch (Exception ex) {
-            System.out.println(ex.getMessage());
-        }
-        return false;
-    }
-
     public String dodaj(String podKomanda) {
         String[] podKomandaArray = KomandaUtils.rastaviKomandu(podKomanda);
         String prezime = podKomandaArray[1];
@@ -166,7 +148,7 @@ public class KlijentSocket implements Runnable {
         if (!korisnikPostoji(korisnickoIme)) {
             String sql = "INSERT INTO korisnici (korisnicko_ime, lozinka, prezime, ime) VALUES (?,?,?,?)";
             try (
-                    Connection conn = BazaPodataka.INSTANCE.getConnection();
+                    Connection conn = BazaPodataka.getConnection();
                     PreparedStatement ps = conn.prepareStatement(sql)) {
                 ps.setString(1, korisnickoIme);
                 ps.setString(2, lozinka);
@@ -183,7 +165,7 @@ public class KlijentSocket implements Runnable {
 
     public boolean korisnikPostoji(String korisnickoIme) {
         String sql = "SELECT *FROM korisnici WHERE korisnicko_ime = ?";
-        try (Connection conn = BazaPodataka.INSTANCE.getConnection();
+        try (Connection conn = BazaPodataka.getConnection();
                 PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, korisnickoIme);
             ResultSet rs = ps.executeQuery();
@@ -258,7 +240,7 @@ public class KlijentSocket implements Runnable {
     private String listaj() {
         String sql = "SELECT *FROM korisnici";
         JsonArrayBuilder jsonArrayKorisnici = Json.createArrayBuilder();
-        try (Connection conn = BazaPodataka.INSTANCE.getConnection();
+        try (Connection conn = BazaPodataka.getConnection();
                 Statement stmt = conn.createStatement();
                 ResultSet rs = stmt.executeQuery(sql)) {
             if (!rs.next()) {

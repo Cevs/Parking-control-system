@@ -54,7 +54,7 @@ public class OWMKlijent {
             //mp.setSunSet(new Date(jo.getJsonObject("sys").getJsonNumber("sunset").bigDecimalValue().longValue()*1000));
             
             mp.setTemperatureValue(((jo.getJsonObject("main").getJsonNumber("temp") != null)?
-                    new Double(jo.getJsonObject("wind").getJsonNumber("speed").doubleValue()).floatValue():null));
+                    new Double(jo.getJsonObject("main").getJsonNumber("temp").doubleValue()).floatValue():null));
             mp.setTemperatureMin(((jo.getJsonObject("main").getJsonNumber("temp_min") != null)?
                     new Double(jo.getJsonObject("main").getJsonNumber("temp_min").doubleValue()).floatValue():null));
             mp.setTemperatureMax(((jo.getJsonObject("main").getJsonNumber("temp_max") != null)?

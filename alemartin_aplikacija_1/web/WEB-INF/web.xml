@@ -9,6 +9,10 @@
         <param-value>NWTiS.db.config.xml</param-value>
     </context-param>
     <context-param>
+        <param-name>javax.faces.DATETIMECONVERTER_DEFAULT_TIMEZONE_IS_SYSTEM_TIMEZONE</param-name>
+        <param-value>true</param-value>
+    </context-param>
+    <context-param>
         <param-name>aplikacija_konfiguracija</param-name>
         <param-value>NWTiS.app.config.xml</param-value>
     </context-param>
@@ -16,14 +20,26 @@
         <description>ServletContextListener</description>
         <listener-class>org.foi.nwtis.alemartin.web.slusaci.SlusacAplikacije</listener-class>
     </listener>
+    <listener>
+        <listener-class>com.sun.xml.ws.transport.http.servlet.WSServletContextListener</listener-class>
+    </listener>
     <servlet>
         <servlet-name>Faces Servlet</servlet-name>
         <servlet-class>javax.faces.webapp.FacesServlet</servlet-class>
         <load-on-startup>1</load-on-startup>
     </servlet>
+    <servlet>
+        <servlet-name>GeoMeteoWS</servlet-name>
+        <servlet-class>com.sun.xml.ws.transport.http.servlet.WSServlet</servlet-class>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
     <servlet-mapping>
         <servlet-name>Faces Servlet</servlet-name>
         <url-pattern>/faces/*</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>GeoMeteoWS</servlet-name>
+        <url-pattern>/GeoMeteoWS</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>

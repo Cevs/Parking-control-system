@@ -52,7 +52,6 @@ public class PreuzmiMeteoPodatke extends Thread {
                     List<Parkiraliste> parkiralista = dohvatiParkiralista();
                     dohvatiSpremiMeteoPodatke(parkiralista);
                 }
-
                 sleep(interval * 1000);
             }
         } catch (Exception ex) {
@@ -75,7 +74,7 @@ public class PreuzmiMeteoPodatke extends Thread {
     private List<Parkiraliste> dohvatiParkiralista() {
         List<Parkiraliste> parkiralista = new ArrayList<>();
         String sql = "SELECT *FROM parkiralista";
-        try (Connection con = BazaPodataka.INSTANCE.getConnection();
+        try (Connection con = BazaPodataka.getConnection();
                 Statement stat = con.createStatement();
                 ResultSet rs = stat.executeQuery(sql)) {
             while (rs.next()) {
@@ -101,22 +100,21 @@ public class PreuzmiMeteoPodatke extends Thread {
      *
      * @param List<Parkiraliste> spremljenaParkiralista
      */
-    private void dohvatiSpremiMeteoPodatke(List<Parkiraliste> spremljenaParkiralista) {
-        for (Parkiraliste p : spremljenaParkiralista) {
-            OWMKlijent owmk = new OWMKlijent(openWeatherApiKey);
-            MeteoPodaci mp = owmk.getRealTimeWeather(p.getGeoloc().getLatitude(), p.getGeoloc().getLongitude());
-
-            if (mp != null) {
-                String sql = kreirajSQLInsert(mp, p);
-                try (Connection conn = BazaPodataka.INSTANCE.getConnection();
-                        Statement stat = conn.createStatement();) {
+    private void dohvatiSpremiMeteoPodatke(List<Parkiraliste> spremljenaParkiralista) {     
+        try(Connection conn = BazaPodataka.getConnection();
+                Statement stat = conn.createStatement()){
+            for(Parkiraliste p: spremljenaParkiralista){
+                OWMKlijent owmk = new OWMKlijent(openWeatherApiKey);
+                MeteoPodaci mp = owmk.getRealTimeWeather(p.getGeoloc().getLatitude(), p.getGeoloc().getLongitude());
+                
+                if(mp!=null){
+                    String sql = kreirajSQLInsert(mp, p);
                     stat.execute(sql);
-                } catch (SQLException ex) {
-                    Logger.getLogger(PreuzmiMeteoPodatke.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
-
-        }
+        } catch (SQLException ex) {
+            Logger.getLogger(PreuzmiMeteoPodatke.class.getName()).log(Level.SEVERE, null, ex);
+        }        
     }
 
     /**
@@ -135,7 +133,7 @@ public class PreuzmiMeteoPodatke extends Thread {
                 + "VALUES (" + p.getId()+", ";
         sql += (p.getAdresa() != null) ? "'"+p.getAdresa() + "', " : "DEFAULT, ";
         sql += (p.getGeoloc().getLatitude() != null) ? "'"+p.getGeoloc().getLatitude() + "', " : "DEFAULT, ";
-        sql += (p.getGeoloc().getLatitude() != null) ? "'"+p.getGeoloc().getLatitude() + "', " : "DEFAULT, ";
+        sql += (p.getGeoloc().getLatitude() != null) ? "'"+p.getGeoloc().getLongitude()+ "', " : "DEFAULT, ";
         sql += (mp.getWeatherValue() != null) ? "'"+mp.getWeatherValue() + "', " : "DEFAULT, ";
         sql += (mp.getWeatherIcon() != null) ? "'"+mp.getWeatherIcon() + "', " : "DEFAULT, ";
         sql += (mp.getTemperatureValue() != null) ? "'"+mp.getTemperatureValue() + "', " : "DEFAULT, ";

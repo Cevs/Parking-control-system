@@ -33,12 +33,11 @@ public class BazaPodataka {
     private WebServiceContext context;
 
     private BP_Konfiguracija bpk;
-    private String url;
-    private String korisnik;
-    private String lozinka;
+    private static String url;
+    private static String dbKorisnik;
+    private static String dbLozinka;
     private String serverDatabase;
-
-    public static final BazaPodataka INSTANCE = new BazaPodataka();
+    private static BazaPodataka instanca;
 
     /**
      * Privatni konstruktor. Dohvaća potrebnu konfiguraciju za bazu podataka i
@@ -49,8 +48,8 @@ public class BazaPodataka {
         bpk = (BP_Konfiguracija) servletContext.getAttribute("konfiguracija_baze");
         url = bpk.getServerDatabase() + bpk.getUserDatabase();
         serverDatabase = bpk.getServerDatabase();
-        korisnik = bpk.getUserUsername();
-        lozinka = bpk.getUserPassword();
+        dbKorisnik = bpk.getUserUsername();
+        dbLozinka = bpk.getUserPassword();
         try {
             Class.forName(bpk.getDriverDatabase()).newInstance();
         } catch (Exception ex) {
@@ -63,9 +62,12 @@ public class BazaPodataka {
      *
      * @return Connection
      */
-    public Connection getConnection() {
+    public static Connection getConnection() {
         try {
-            return DriverManager.getConnection(url, korisnik, lozinka);
+            if(instanca == null){
+                instanca = new BazaPodataka();
+            }
+            return DriverManager.getConnection(url, dbKorisnik, dbLozinka);
         } catch (SQLException ex) {
             Logger.getLogger(BazaPodataka.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -97,37 +99,43 @@ public class BazaPodataka {
         }
         return "";
     }
-   
-    public void UpisDnevnika(String korisnickoIme, String vrstaZahtjeva, String sadrzajZahtjeva) {    
-        try (Connection conn = getConnection()) {
-            String sql = "SELECT *FROM korisnici where korisnicko_ime = ?";
-            PreparedStatement ps = conn.prepareStatement(sql);
+
+    public static void UpisDnevnika(String korisnickoIme, String vrstaZahtjeva, String sadrzajZahtjeva) {
+        String sqlSelect = "SELECT *FROM korisnici where korisnicko_ime = ?";
+        String sqlInsert = "INSERT INTO dnevnik (korisnik, vrsta_zahtjeva, sadrzaj_zahtjeva) VALUES (?, ?, ?)";
+    
+        try (Connection conn = getConnection();
+                PreparedStatement ps = conn.prepareStatement(sqlSelect);
+                PreparedStatement ps2 = conn.prepareStatement(sqlInsert)) {
             ps.setString(1, korisnickoIme);
             ResultSet rs = ps.executeQuery();
             rs.next();
             int idKorisnik = rs.getInt("id");
-            ps.close();
-            String sqlInsert = "INSERT INTO dnevnik (korisnik, vrsta_zahtjeva, sadrzaj_zahtjeva) VALUES (?, ?, ?)";
-            ps = conn.prepareStatement(sqlInsert);
-            ps.setInt(1, idKorisnik);
-            ps.setString(2, vrstaZahtjeva);
-            ps.setString(3, sadrzajZahtjeva);
-            ps.executeUpdate();
+            ps2.setInt(1, idKorisnik);
+            ps2.setString(2, vrstaZahtjeva);
+            ps2.setString(3, sadrzajZahtjeva);
+            ps2.executeUpdate();
         } catch (SQLException ex) {
             Logger.getLogger(BazaPodataka.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
+    public static boolean autentificirajKorisnika(String korisnickoIme, String lozinka) {
+        String sql = "SELECT *FROM korisnici WHERE korisnicko_ime = ? AND lozinka = ?";
+        try (Connection conn = getConnection();
+                PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, korisnickoIme);
+            ps.setString(2, lozinka);
+            ResultSet rs = ps.executeQuery();
+            return rs.next();
+        } catch (SQLException ex) {
+            Logger.getLogger(BazaPodataka.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return false;
+    }
+
     public String getUrl() {
         return url;
-    }
-
-    public String getKorisnik() {
-        return korisnik;
-    }
-
-    public String getLozinka() {
-        return lozinka;
     }
 
 }
