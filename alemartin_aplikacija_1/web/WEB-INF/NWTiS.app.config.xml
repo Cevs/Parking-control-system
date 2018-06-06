@@ -20,4 +20,6 @@
     <entry key="mail.subjectEmail">IOT poruka</entry>
     <entry key="mail.numMessagesToShow">7</entry>
     <entry key="mail.numLogItemsToShow">7</entry> 
+    <entry key="nwtis.korisnickoIme">alemartin</entry>
+    <entry key="nwtis.lozinka">121459</entry>
 </properties>

@@ -44,6 +44,10 @@
 
 <xs:element name="dajSvaParkiralistaGrupeResponse" type="tns:dajSvaParkiralistaGrupeResponse" />
 
+<xs:element name="dajSvaVozilaParkiralistaGrupe" type="tns:dajSvaVozilaParkiralistaGrupe" />
+
+<xs:element name="dajSvaVozilaParkiralistaGrupeResponse" type="tns:dajSvaVozilaParkiralistaGrupeResponse" />
+
 <xs:element name="dajTrajanjeCiklusa" type="tns:dajTrajanjeCiklusa" />
 
 <xs:element name="dajTrajanjeCiklusaResponse" type="tns:dajTrajanjeCiklusaResponse" />
@@ -253,6 +257,28 @@
 </xs:sequence>
 </xs:complexType>
 
+<xs:complexType name="dajSvaVozilaParkiralistaGrupe">
+<xs:sequence>
+<xs:element name="korisnickoIme" type="xs:string" minOccurs="0" />
+<xs:element name="korisnickaLozinka" type="xs:string" minOccurs="0" />
+<xs:element name="idParkiraliste" type="xs:int" />
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="dajSvaVozilaParkiralistaGrupeResponse">
+<xs:sequence>
+<xs:element name="return" type="tns:vozilo" minOccurs="0" maxOccurs="unbounded" />
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="vozilo">
+<xs:sequence>
+<xs:element name="akcija" type="tns:statusVozila" minOccurs="0" />
+<xs:element name="parkiraliste" type="xs:int" />
+<xs:element name="registracija" type="xs:string" minOccurs="0" />
+</xs:sequence>
+</xs:complexType>
+
 <xs:complexType name="dajTrajanjeCiklusa">
 <xs:sequence>
 <xs:element name="korisnickoIme" type="xs:string" minOccurs="0" />
@@ -376,19 +402,6 @@
 </xs:sequence>
 </xs:complexType>
 
-<xs:complexType name="registrirajGrupu">
-<xs:sequence>
-<xs:element name="korisnickoIme" type="xs:string" minOccurs="0" />
-<xs:element name="korisnickaLozinka" type="xs:string" minOccurs="0" />
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="registrirajGrupuResponse">
-<xs:sequence>
-<xs:element name="return" type="xs:boolean" minOccurs="0" />
-</xs:sequence>
-</xs:complexType>
-
 <xs:complexType name="deregistrirajGrupu">
 <xs:sequence>
 <xs:element name="korisnickoIme" type="xs:string" minOccurs="0" />
@@ -397,6 +410,19 @@
 </xs:complexType>
 
 <xs:complexType name="deregistrirajGrupuResponse">
+<xs:sequence>
+<xs:element name="return" type="xs:boolean" minOccurs="0" />
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="registrirajGrupu">
+<xs:sequence>
+<xs:element name="korisnickoIme" type="xs:string" minOccurs="0" />
+<xs:element name="korisnickaLozinka" type="xs:string" minOccurs="0" />
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="registrirajGrupuResponse">
 <xs:sequence>
 <xs:element name="return" type="xs:boolean" minOccurs="0" />
 </xs:sequence>
@@ -418,6 +444,13 @@
 <xs:enumeration value="NEAKTIVAN" />
 <xs:enumeration value="BLOKIRAN" />
 <xs:enumeration value="NEPOSTOJI" />
+</xs:restriction>
+</xs:simpleType>
+
+<xs:simpleType name="statusVozila">
+<xs:restriction base="xs:string">
+<xs:enumeration value="ULAZ" />
+<xs:enumeration value="IZLAZ" />
 </xs:restriction>
 </xs:simpleType>
 </xs:schema>

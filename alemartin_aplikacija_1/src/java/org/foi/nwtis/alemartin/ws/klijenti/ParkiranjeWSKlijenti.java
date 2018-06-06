@@ -40,4 +40,23 @@ public class ParkiranjeWSKlijenti {
         org.foi.nwtis.alemartin.ws.klijenti.Parkiranje port = service.getParkiranjePort();
         return port.dajStatusGrupe(korisnickoIme, korisnickaLozinka);
     }
+
+    public static java.util.List<org.foi.nwtis.alemartin.ws.klijenti.Parkiraliste> dajSvaParkiralistaGrupe(java.lang.String korisnickoIme, java.lang.String korisnickaLozinka) {
+        org.foi.nwtis.alemartin.ws.klijenti.Parkiranje_Service service = new org.foi.nwtis.alemartin.ws.klijenti.Parkiranje_Service();
+        org.foi.nwtis.alemartin.ws.klijenti.Parkiranje port = service.getParkiranjePort();
+        return port.dajSvaParkiralistaGrupe(korisnickoIme, korisnickaLozinka);
+    }
+
+    public static boolean obrisiParkiralisteGrupe(java.lang.String korisnickoIme, java.lang.String korisnickaLozinka, int idParkiraliste) {
+        org.foi.nwtis.alemartin.ws.klijenti.Parkiranje_Service service = new org.foi.nwtis.alemartin.ws.klijenti.Parkiranje_Service();
+        org.foi.nwtis.alemartin.ws.klijenti.Parkiranje port = service.getParkiranjePort();
+        return port.obrisiParkiralisteGrupe(korisnickoIme, korisnickaLozinka, idParkiraliste);
+    }
+
+    public static java.util.List<org.foi.nwtis.alemartin.ws.klijenti.Vozilo> dajSvaVozilaParkiralistaGrupe(java.lang.String korisnickoIme, java.lang.String korisnickaLozinka, int idParkiraliste) {
+        org.foi.nwtis.alemartin.ws.klijenti.Parkiranje_Service service = new org.foi.nwtis.alemartin.ws.klijenti.Parkiranje_Service();
+        org.foi.nwtis.alemartin.ws.klijenti.Parkiranje port = service.getParkiranjePort();
+        return port.dajSvaVozilaParkiralistaGrupe(korisnickoIme, korisnickaLozinka, idParkiraliste);
+    }
+   
 }
