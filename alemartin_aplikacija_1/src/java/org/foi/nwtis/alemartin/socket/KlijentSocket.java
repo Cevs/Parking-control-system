@@ -50,7 +50,7 @@ public class KlijentSocket implements Runnable {
     private static final List<String> KORISNICKI_ZAHTJEVI = Arrays.asList("dodaj", "pasivno", "aktivno", "listaj");
     private static Method metoda;
     private static AtomicBoolean radi = new AtomicBoolean(true);
-    
+
     public KlijentSocket(Socket klijetSocket) {
         this.klijetSocket = klijetSocket;
     }
@@ -99,7 +99,7 @@ public class KlijentSocket implements Runnable {
         }
 
         String podKomanda = KomandaUtils.vratiPodkomandu(komanda, 4);
-        if (akcija.equals("dodaj")) {
+        if (akcija.equals("dodaj") || akcija.equals("ažuriraj")) {
             metoda = this.getClass().getDeclaredMethod(akcija, String.class);
             metoda.setAccessible(true);
             return (String) metoda.invoke(this, (String) podKomanda);
@@ -113,34 +113,34 @@ public class KlijentSocket implements Runnable {
             return "OK 10";     //Komanda je sadržavala samo autorizacijske podatke
         }
 
-        BazaPodataka.UpisDnevnika(KomandaUtils.dohvatiKorisnickoIme(komanda), "socket", komanda);               
+        BazaPodataka.UpisDnevnika(KomandaUtils.dohvatiKorisnickoIme(komanda), "socket", komanda);
         metoda = this.getClass().getDeclaredMethod(akcija);
         metoda.setAccessible(true);
         String odgovor = (String) metoda.invoke(this);
-        
+
         //Send email
-        if(tipKomande.equals("posluzitelj")){                 
+        if (tipKomande.equals("posluzitelj")) {
             Email.posaljiEmail(sastaviPoruku(komanda));
         }
-        
+
         return odgovor;
 
     }
-    
-    private String sastaviPoruku(String komanda){
+
+    private String sastaviPoruku(String komanda) {
         int emailId = PosluziteljSocketSlusac.getAndIncrementeEmailId();
-        
+
         JsonObjectBuilder jsonEmail = Json.createObjectBuilder();
         jsonEmail.add("id", emailId);
         jsonEmail.add("komanda", KomandaUtils.izbaciLozinku(komanda));
-        
+
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss.zzz");
         Date date = new Date();
-        
+
         jsonEmail.add("vrijeme", sdf.format(date));
         return jsonEmail.build().toString();
     }
-    
+
     public String dodaj(String podKomanda) {
         String[] podKomandaArray = KomandaUtils.rastaviKomandu(podKomanda);
         String prezime = podKomandaArray[1];
@@ -154,6 +154,26 @@ public class KlijentSocket implements Runnable {
                 ps.setString(2, lozinka);
                 ps.setString(3, prezime);
                 ps.setString(4, ime);
+                ps.executeUpdate();
+                return "OK 10;";
+            } catch (SQLException ex) {
+                Logger.getLogger(KlijentSocket.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        return "ERR 10;";
+    }
+
+    public String ažuriraj(String podKomanda) {
+        String[] podKomaandaArray = KomandaUtils.rastaviKomandu(podKomanda);
+        String prezime = podKomaandaArray[1];
+        String ime = podKomaandaArray[2];
+        if (korisnikPostoji(korisnickoIme)) {
+            String sql = "UPDATE korisnici SET prezime = ?, ime = ? WHERE korisnicko_ime = ?";
+            try (Connection conn = BazaPodataka.getConnection();
+                    PreparedStatement ps = conn.prepareStatement(sql)) {
+                ps.setString(1, prezime);
+                ps.setString(2, ime);
+                ps.setString(3, korisnickoIme);
                 ps.executeUpdate();
                 return "OK 10;";
             } catch (SQLException ex) {
@@ -264,8 +284,8 @@ public class KlijentSocket implements Runnable {
 
     private String grupaDodaj() {
         StatusKorisnika statusGrupe = ParkiranjeWSKlijenti.dajStatusGrupe(korisnickoIme, lozinka);
-        if (statusGrupe.name().equals("NEPOSTOJI")) {
-            boolean b = ParkiranjeWSKlijenti.registrirajGrupu(korisnickoIme, lozinka);
+        if (statusGrupe == StatusKorisnika.DEREGISTRIRAN) {
+            ParkiranjeWSKlijenti.registrirajGrupu(korisnickoIme, lozinka);
             return "OK 20;";
         }
         return "ERR 20;";
@@ -273,47 +293,52 @@ public class KlijentSocket implements Runnable {
 
     private String grupaPrekid() {
         StatusKorisnika statusGrupe = ParkiranjeWSKlijenti.dajStatusGrupe(korisnickoIme, lozinka);
-        if (statusGrupe.name().equals("NEPOSTOJI")) {
-            return "ERR 21";
+        if (statusGrupe != StatusKorisnika.DEREGISTRIRAN) {
+            ParkiranjeWSKlijenti.deregistrirajGrupu(korisnickoIme, lozinka);
+            return "OK 20;";
         }
-        boolean b = ParkiranjeWSKlijenti.deregistrirajGrupu(korisnickoIme, lozinka);
-        return "OK 20;";
+        return "ERR 21";
     }
 
     private String grupaKreni() {
         StatusKorisnika statusGrupe = ParkiranjeWSKlijenti.dajStatusGrupe(korisnickoIme, lozinka);
-        if (statusGrupe.name().equals("AKTIVNA")) {
-            return "ERR 22;";
-        } else if (statusGrupe.name().equals("NEPOSTOJI")) {
-            return "ERR 21;";
-        } else {
-            boolean b = ParkiranjeWSKlijenti.aktivirajGrupu(korisnickoIme, lozinka);
-            return "OK 20;";
+        switch (statusGrupe) {
+            case DEREGISTRIRAN:
+                return "ERR 21;";
+            case AKTIVAN:
+                return "ERR 22;";
+            default:
+                ParkiranjeWSKlijenti.aktivirajGrupu(korisnickoIme, lozinka);
+                return "OK 20;";
         }
-
     }
 
     private String grupaPauza() {
         StatusKorisnika statusGrupe = ParkiranjeWSKlijenti.dajStatusGrupe(korisnickoIme, lozinka);
-        if (statusGrupe.name().equals("NEAKTIVAN")) {
-            return "ERR 23;";
-        } else if (statusGrupe.name().equals("NEPOSTOJI")) {
-            return "ERR 21;";
-        } else {
-            ParkiranjeWSKlijenti.blokirajGrupu(korisnickoIme, lozinka);
-            return "OK 20;";
+        switch (statusGrupe) {
+            case BLOKIRAN:
+                return "ERR 23;";
+            case DEREGISTRIRAN:
+                return "ERR 21;";
+            default:
+                ParkiranjeWSKlijenti.blokirajGrupu(korisnickoIme, lozinka);
+                return "OK 20;";
         }
-
     }
 
     private String grupaStanje() {
         StatusKorisnika statusGrupe = ParkiranjeWSKlijenti.dajStatusGrupe(korisnickoIme, lozinka);
-        if (statusGrupe.name().equals("AKTIVNA")) {
-            return "OK 21";
-        } else if (statusGrupe.name().equals("BLOKIRAN")) {
-            return "OK 22;";
-        } else {
-            return "ERR 21;";
+        switch (statusGrupe) {
+            case REGISTRIRAN: 
+                return "OK 23;";
+            case BLOKIRAN:
+                return "OK 22;";
+            case AKTIVAN:
+                return "OK 21;";
+            case DEREGISTRIRAN:
+                return "ERR 21;";
+            default:
+                return "ERR 21;";
         }
     }
 }

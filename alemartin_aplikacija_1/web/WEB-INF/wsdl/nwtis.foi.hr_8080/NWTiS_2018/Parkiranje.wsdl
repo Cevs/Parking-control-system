@@ -65,12 +65,6 @@
 <message name="autenticirajGrupuResponse">
 <part name="parameters" element="tns:autenticirajGrupuResponse" />
 </message>
-<message name="dodajNovoParkiralisteGrupi">
-<part name="parameters" element="tns:dodajNovoParkiralisteGrupi" />
-</message>
-<message name="dodajNovoParkiralisteGrupiResponse">
-<part name="parameters" element="tns:dodajNovoParkiralisteGrupiResponse" />
-</message>
 <message name="obrisiSvaParkiralistaGrupe">
 <part name="parameters" element="tns:obrisiSvaParkiralistaGrupe" />
 </message>
@@ -118,6 +112,12 @@
 </message>
 <message name="blokirajOdabranaParkiralistaGrupeResponse">
 <part name="parameters" element="tns:blokirajOdabranaParkiralistaGrupeResponse" />
+</message>
+<message name="dodajNovoParkiralisteGrupi">
+<part name="parameters" element="tns:dodajNovoParkiralisteGrupi" />
+</message>
+<message name="dodajNovoParkiralisteGrupiResponse">
+<part name="parameters" element="tns:dodajNovoParkiralisteGrupiResponse" />
 </message>
 <message name="dajSvaParkiralistaGrupe">
 <part name="parameters" element="tns:dajSvaParkiralistaGrupe" />
@@ -184,10 +184,6 @@
 <input wsam:Action="http://serveri.ws.dkermek.nwtis.foi.org/Parkiranje/autenticirajGrupuRequest" message="tns:autenticirajGrupu" />
 <output wsam:Action="http://serveri.ws.dkermek.nwtis.foi.org/Parkiranje/autenticirajGrupuResponse" message="tns:autenticirajGrupuResponse" />
 </operation>
-<operation name="dodajNovoParkiralisteGrupi">
-<input wsam:Action="http://serveri.ws.dkermek.nwtis.foi.org/Parkiranje/dodajNovoParkiralisteGrupiRequest" message="tns:dodajNovoParkiralisteGrupi" />
-<output wsam:Action="http://serveri.ws.dkermek.nwtis.foi.org/Parkiranje/dodajNovoParkiralisteGrupiResponse" message="tns:dodajNovoParkiralisteGrupiResponse" />
-</operation>
 <operation name="obrisiSvaParkiralistaGrupe">
 <input wsam:Action="http://serveri.ws.dkermek.nwtis.foi.org/Parkiranje/obrisiSvaParkiralistaGrupeRequest" message="tns:obrisiSvaParkiralistaGrupe" />
 <output wsam:Action="http://serveri.ws.dkermek.nwtis.foi.org/Parkiranje/obrisiSvaParkiralistaGrupeResponse" message="tns:obrisiSvaParkiralistaGrupeResponse" />
@@ -219,6 +215,10 @@
 <operation name="blokirajOdabranaParkiralistaGrupe">
 <input wsam:Action="http://serveri.ws.dkermek.nwtis.foi.org/Parkiranje/blokirajOdabranaParkiralistaGrupeRequest" message="tns:blokirajOdabranaParkiralistaGrupe" />
 <output wsam:Action="http://serveri.ws.dkermek.nwtis.foi.org/Parkiranje/blokirajOdabranaParkiralistaGrupeResponse" message="tns:blokirajOdabranaParkiralistaGrupeResponse" />
+</operation>
+<operation name="dodajNovoParkiralisteGrupi">
+<input wsam:Action="http://serveri.ws.dkermek.nwtis.foi.org/Parkiranje/dodajNovoParkiralisteGrupiRequest" message="tns:dodajNovoParkiralisteGrupi" />
+<output wsam:Action="http://serveri.ws.dkermek.nwtis.foi.org/Parkiranje/dodajNovoParkiralisteGrupiResponse" message="tns:dodajNovoParkiralisteGrupiResponse" />
 </operation>
 <operation name="dajSvaParkiralistaGrupe">
 <input wsam:Action="http://serveri.ws.dkermek.nwtis.foi.org/Parkiranje/dajSvaParkiralistaGrupeRequest" message="tns:dajSvaParkiralistaGrupe" />
@@ -330,15 +330,6 @@
 <soap:body use="literal" />
 </output>
 </operation>
-<operation name="dodajNovoParkiralisteGrupi">
-<soap:operation soapAction="" />
-<input>
-<soap:body use="literal" />
-</input>
-<output>
-<soap:body use="literal" />
-</output>
-</operation>
 <operation name="obrisiSvaParkiralistaGrupe">
 <soap:operation soapAction="" />
 <input>
@@ -403,6 +394,15 @@
 </output>
 </operation>
 <operation name="blokirajOdabranaParkiralistaGrupe">
+<soap:operation soapAction="" />
+<input>
+<soap:body use="literal" />
+</input>
+<output>
+<soap:body use="literal" />
+</output>
+</operation>
+<operation name="dodajNovoParkiralisteGrupi">
 <soap:operation soapAction="" />
 <input>
 <soap:body use="literal" />

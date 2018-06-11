@@ -178,6 +178,23 @@
 </xs:sequence>
 </xs:complexType>
 
+<xs:complexType name="dodajNovoParkiralisteGrupi">
+<xs:sequence>
+<xs:element name="korisnickoIme" type="xs:string" minOccurs="0" />
+<xs:element name="korisnickaLozinka" type="xs:string" minOccurs="0" />
+<xs:element name="idParkiraliste" type="xs:int" />
+<xs:element name="nazivParkiraliste" type="xs:string" minOccurs="0" />
+<xs:element name="adresaParkiraliste" type="xs:string" minOccurs="0" />
+<xs:element name="kapacitetParkiraliste" type="xs:int" />
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="dodajNovoParkiralisteGrupiResponse">
+<xs:sequence>
+<xs:element name="return" type="xs:boolean" minOccurs="0" />
+</xs:sequence>
+</xs:complexType>
+
 <xs:complexType name="obrisiSvaParkiralistaGrupe">
 <xs:sequence>
 <xs:element name="korisnickoIme" type="xs:string" minOccurs="0" />
@@ -346,23 +363,6 @@
 </xs:sequence>
 </xs:complexType>
 
-<xs:complexType name="dodajNovoParkiralisteGrupi">
-<xs:sequence>
-<xs:element name="korisnickoIme" type="xs:string" minOccurs="0" />
-<xs:element name="korisnickaLozinka" type="xs:string" minOccurs="0" />
-<xs:element name="idParkiraliste" type="xs:int" />
-<xs:element name="nazivParkiraliste" type="xs:string" minOccurs="0" />
-<xs:element name="adresaParkiraliste" type="xs:string" minOccurs="0" />
-<xs:element name="kapacitetParkiraliste" type="xs:int" />
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="dodajNovoParkiralisteGrupiResponse">
-<xs:sequence>
-<xs:element name="return" type="xs:boolean" minOccurs="0" />
-</xs:sequence>
-</xs:complexType>
-
 <xs:complexType name="promjeniTrajanjeCiklusa">
 <xs:sequence>
 <xs:element name="korisnickoIme" type="xs:string" minOccurs="0" />
@@ -442,6 +442,8 @@
 <xs:enumeration value="PASIVAN" />
 <xs:enumeration value="AKTIVAN" />
 <xs:enumeration value="NEAKTIVAN" />
+<xs:enumeration value="REGISTRIRAN" />
+<xs:enumeration value="DEREGISTRIRAN" />
 <xs:enumeration value="BLOKIRAN" />
 <xs:enumeration value="NEPOSTOJI" />
 </xs:restriction>
