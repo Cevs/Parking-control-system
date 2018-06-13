@@ -10,16 +10,22 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.Resource;
 import javax.servlet.ServletContext;
 import javax.xml.ws.WebServiceContext;
+import org.foi.nwtis.alemartin.konfiguracije.Konfiguracija;
 import org.foi.nwtis.alemartin.konfiguracije.bp.BP_Konfiguracija;
+import org.foi.nwtis.alemartin.web.podaci.Dnevnik;
+import org.foi.nwtis.alemartin.web.podaci.Korisnik;
 import org.foi.nwtis.alemartin.web.slusaci.SlusacAplikacije;
 
 /**
@@ -32,11 +38,12 @@ public class BazaPodataka {
     @Resource
     private WebServiceContext context;
 
-    private BP_Konfiguracija bpk;
+    private static BP_Konfiguracija bpk;
+    private static Konfiguracija konfig;
     private static String url;
     private static String dbKorisnik;
     private static String dbLozinka;
-    private String serverDatabase;
+    private static String serverDatabase;
     private static BazaPodataka instanca;
 
     /**
@@ -81,13 +88,12 @@ public class BazaPodataka {
      * @param timestamp
      * @return
      */
-    public String pretvoriDatum(String timestamp) {
+    public static String pretvoriDatum(String timestamp) {
         if (serverDatabase.contains("mysql")) {
             try {
-                String sDate = timestamp.toString();
                 DateFormat originalFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
                 DateFormat targetFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                Date date = originalFormat.parse(sDate);
+                Date date = originalFormat.parse(timestamp);
                 String formatedDate = targetFormat.format(date);
                 return formatedDate;
             } catch (ParseException ex) {
@@ -137,5 +143,5 @@ public class BazaPodataka {
     public String getUrl() {
         return url;
     }
-
+   
 }

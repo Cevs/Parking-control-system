@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <h:head>
+        <title>Pregled dnevnika</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous"/>
+    </h:head>
+    <body>     
+        <h:form>
+            <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+                <a class="navbar-brand" href="#">Aplikacija 1</a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+                    <div class="navbar-nav">
+                        <h:commandLink class="nav-item nav-link active" value="Korisnici" action="#{pregledDnevnika.pregledKorisnika()}" />
+                    </div>
+                </div>
+            </nav>
+            <div class="container">
+                <h1 class="text-center">
+                    Dnevnik
+                </h1>
+
+                <table>
+                    <tr>
+                        <td><h:outputLabel for="vrstaZapisa" value="Vrsta zapisa:"/></td>
+                        <td><h:inputText id="vrstaZapisa" value="#{pregledDnevnika.vrstaZapisa}"/></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td><h:outputLabel value="(Od-Do):"/></td>
+                        <td><h:inputText id="vrijemeOd" value="#{pregledDnevnika.vrijemeOd}" pt:placeholder="dd.MM.yyyy HH:mm:ss"/></td>
+                        <td><h:inputText id="vrijemeDo" value="#{pregledDnevnika.vrijemeDo}" pt:placeholder="dd.MM.yyyy HH:mm:ss"/></td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td>
+                            <h:commandButton class="w-100" value="Postavi filter" action="#{pregledDnevnika.postaviFiltere()}">
+                                <f:ajax  execute="vrijemeOd vrijemeDo vrstaZapisa" render="dnevnik sljedeci prethodni "/>
+                            </h:commandButton>
+                        </td>
+                    </tr>
+                </table>
+
+                <h:dataTable id="dnevnik" value="#{pregledDnevnika.listaDnevnika}" var = "d" 
+                             style ="word-wrap:break-word;"
+                             class="table table-hover">
+                    <h:column>
+                        <f:facet name="header"><h:outputText value="Id"/></f:facet>
+                        <h:outputText value="#{d.id}"/>     
+                    </h:column>
+                    <h:column>
+                        <f:facet name="header"><h:outputText value="Korisnik"/></f:facet>
+                        <h:outputText value="#{d.idKorisnik}"/>     
+                    </h:column>
+                    <h:column>
+                        <f:facet name="header"><h:outputText value="Url"/></f:facet>
+                        <h:outputText value="#{d.url}"/>     
+                    </h:column>
+                    <h:column>
+                        <f:facet name="header"><h:outputText value="IP adresa"/></f:facet>
+                        <h:outputText value="#{d.ip}"/>     
+                    </h:column>
+                    <h:column>
+                        <f:facet name="header"><h:outputText value="Vrsta zahtjeva"/></f:facet>
+                        <h:outputText value="#{d.vrstaZahtjeva}"/>     
+                    </h:column>
+                    <h:column>
+                        <f:facet name="header"><h:outputText value="Sadrzaj"/></f:facet>
+                        <h:outputText value="#{d.sadrzajZahtjeva}"/>     
+                    </h:column>
+                    <h:column>
+                        <f:facet name="header"><h:outputText value="Vrijeme"/></f:facet>
+                        <h:outputText value="#{d.vrijeme}">
+                            <f:convertDateTime pattern = "dd.MM.yyyy HH:mm:ss"/>
+                        </h:outputText>           
+                    </h:column>
+                    <h:column>
+                        <f:facet name="header"><h:outputText value="Trajanje"/></f:facet>
+                        <h:outputText value="#{d.trajanje}"/>     
+                    </h:column>
+                    <h:column>
+                        <f:facet name="header"><h:outputText value="Status"/></f:facet>
+                        <h:outputText value="#{d.status}"/>     
+                    </h:column>
+                </h:dataTable>
+
+                <h:commandButton id ="prethodni" class="btn btn-outline-dark" value="Prethodni" 
+                                 disabled="#{!pregledDnevnika.prikaziGumbPrethodni}"
+                                 action="#{pregledDnevnika.prethodnaStranica()}">
+                    <f:ajax render = "dnevnik sljedeci prethodni"/>
+                </h:commandButton>
+
+                <h:commandButton id="sljedeci" class="btn btn-outline-dark"  value="Sljedeći" 
+                                 disabled="#{!pregledDnevnika.prikaziGumbSljedeci}"
+                                 action="#{pregledDnevnika.sljedecaStranica()}">
+                    <f:ajax render = "dnevnik sljedeci prethodni"/>
+                </h:commandButton>
+            </div>
+        </h:form>
+        <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js" integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ" crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js" integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm" crossorigin="anonymous"></script>
+    </body>
+</html>
