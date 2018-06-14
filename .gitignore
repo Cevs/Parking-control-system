@@ -42,3 +42,6 @@ nbactions.xml
 # End of https://www.gitignore.io/api/java,netbeans,java-web
 alemartin_aplikacija_1/nbproject/private/private.xml
 /Aplikacija_1_Test/nbproject/private/
+/alemartin_aplikacija_2/nbproject/private/
+/alemartin_aplikacija_2/alemartin_aplikacija_2-war/nbproject/private/
+/alemartin_aplikacija_2/alemartin_aplikacija_2-ejb/nbproject/private/
