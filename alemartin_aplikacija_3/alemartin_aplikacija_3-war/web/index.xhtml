@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html">
+    <h:head>
+        <title>Homepage</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous"/>
+        <h:outputStylesheet library="css" name="main.css"/>
+    </h:head>
+    <body>
+        <h:form>
+            <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+                <div class="collapse navbar-collapse">
+                    <a class="navbar-brand" href="#">Aplikacija 3</a>
+                    <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+                        <li class="nav-item active">
+                            <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">JMS (na čekanju)</a>
+                        </li>
+                         <li class="nav-item">
+                            <a class="nav-link" href="#">JMS (korisničke)</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">Pregled parkirališta</a>
+                        </li>
+                    </ul>
+                    <h:outputText value="Login as: #{username}" style="font-size:18px; color: white; padding-right: 10px"/>                   
+                    <h:commandButton class="btn btn-outline-info my-2 my-sm-0" value="Logout" action="#{login.logout()}"/>
+                </div>
+            </nav>
+
+            <div class="container">
+                <h1>Welcome #{username}</h1>
+            </div>
+        </h:form>
+
+    </body>
+</html>
