@@ -106,11 +106,11 @@ public class KlijentSocket implements Runnable {
         }
 
         if (!BazaPodataka.autentificirajKorisnika(korisnickoIme, lozinka)) {
-            return "ERR 11";    //Neuspjela autentifikacija
+            return "ERR 11;";    //Neuspjela autentifikacija
         }
 
         if (podKomanda.isEmpty()) {
-            return "OK 10";     //Komanda je sadržavala samo autorizacijske podatke
+            return "OK 10;";     //Komanda je sadržavala samo autorizacijske podatke
         }
 
         BazaPodataka.UpisDnevnika(KomandaUtils.dohvatiKorisnickoIme(komanda), "socket", komanda);
