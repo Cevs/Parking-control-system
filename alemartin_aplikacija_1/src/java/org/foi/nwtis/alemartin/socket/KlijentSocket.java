@@ -50,6 +50,7 @@ public class KlijentSocket implements Runnable {
     private static final List<String> KORISNICKI_ZAHTJEVI = Arrays.asList("dodaj", "pasivno", "aktivno", "listaj");
     private static Method metoda;
     private static AtomicBoolean radi = new AtomicBoolean(true);
+    private static AtomicBoolean flagStop = new AtomicBoolean(false);
 
     public KlijentSocket(Socket klijetSocket) {
         this.klijetSocket = klijetSocket;
@@ -72,6 +73,9 @@ public class KlijentSocket implements Runnable {
                 } catch (IOException ex) {
                     Logger.getLogger(KlijentSocket.class.getName()).log(Level.SEVERE, null, ex);
                 }
+            }
+            if (flagStop.get()) {
+                PosluziteljSocketSlusac.ugasiAplikaciju();
             }
         }
     }
@@ -99,7 +103,7 @@ public class KlijentSocket implements Runnable {
         }
 
         String podKomanda = KomandaUtils.vratiPodkomandu(komanda, 4);
-        if (akcija.equals("dodaj") || akcija.equals("ažuriraj")) {
+        if (akcija.equals("dodaj") || akcija.equals("azuriraj")) {
             metoda = this.getClass().getDeclaredMethod(akcija, String.class);
             metoda.setAccessible(true);
             return (String) metoda.invoke(this, (String) podKomanda);
@@ -163,7 +167,7 @@ public class KlijentSocket implements Runnable {
         return "ERR 10;";
     }
 
-    public String ažuriraj(String podKomanda) {
+    public String azuriraj(String podKomanda) {
         String[] podKomaandaArray = KomandaUtils.rastaviKomandu(podKomanda);
         String prezime = podKomaandaArray[1];
         String ime = podKomaandaArray[2];
@@ -240,7 +244,7 @@ public class KlijentSocket implements Runnable {
         }
         radi.set(false);
         PreuzmiMeteoPodatke.setRadi(false);
-        PosluziteljSocketSlusac.ugasiAplikaciju();
+        flagStop.set(true);
         return "OK 10;";
     }
 
@@ -329,7 +333,7 @@ public class KlijentSocket implements Runnable {
     private String grupaStanje() {
         StatusKorisnika statusGrupe = ParkiranjeWSKlijenti.dajStatusGrupe(korisnickoIme, lozinka);
         switch (statusGrupe) {
-            case REGISTRIRAN: 
+            case REGISTRIRAN:
                 return "OK 23;";
             case BLOKIRAN:
                 return "OK 22;";
