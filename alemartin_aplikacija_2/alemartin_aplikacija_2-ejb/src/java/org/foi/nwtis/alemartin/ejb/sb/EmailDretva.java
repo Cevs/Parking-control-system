@@ -21,9 +21,12 @@ import javax.ejb.LocalBean;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
 import javax.inject.Inject;
+import javax.jms.Connection;
+import javax.jms.ConnectionFactory;
 import javax.jms.JMSConnectionFactory;
 import javax.jms.JMSContext;
 import javax.jms.JMSException;
+import javax.jms.MessageProducer;
 import javax.jms.ObjectMessage;
 import javax.jms.Queue;
 import javax.json.Json;
@@ -40,8 +43,7 @@ import org.foi.nwtis.alemartin.konfiguracije.Konfiguracija;
 import org.foi.nwtis.alemartin.konfiguracije.KonfiguracijaApstraktna;
 import org.foi.nwtis.alemartin.konfiguracije.NeispravnaKonfiguracija;
 import org.foi.nwtis.alemartin.konfiguracije.NemaKonfiguracije;
-import org.foi.nwtis.alemartin.web.podaci.JMS;
-
+import org.foi.nwtis.alemartin.web.podaci.EmailJMS;
 
 /**
  *
@@ -52,12 +54,16 @@ import org.foi.nwtis.alemartin.web.podaci.JMS;
 @LocalBean
 public class EmailDretva {
     
-    @Inject
-    @JMSConnectionFactory("jms/NWTiS_alemartin_1Factory")
-    private JMSContext context;
-    
+    @Resource(mappedName ="jms/NWTiS_alemartin_1Factory")
+    private ConnectionFactory connectionFactory;
+
     @Resource(mappedName = "jms/NWTiS_alemartin_1")
     private Queue myQueue;
+
+    /*@Inject
+    @JMSConnectionFactory("jms/NWTiS_alemartin_1Factory")
+    private ConnectionFactory connectionFactory;*/
+    // private JMSContext context;
     
     
 
@@ -99,19 +105,22 @@ public class EmailDretva {
             Logger.getLogger(EmailDretva.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-        Runnable runnable = () -> {
-            while (work) {
-                try {                   
-                    processInbox();
-                    Thread.sleep(interval * 1000);
-                } catch (InterruptedException ex) {
-                    Logger.getLogger(EmailDretva.class.getName()).log(Level.SEVERE, null, ex);
+        Thread thread = new Thread() {
+            @Override
+            public void run() {
+                while (work) {
+                    try {
+                        processInbox();
+                        Thread.sleep(interval * 1000);
+                    } catch (InterruptedException ex) {
+                        Logger.getLogger(EmailDretva.class.getName()).log(Level.SEVERE, null, ex);
+                    }
                 }
             }
         };
-        thread = new Thread(runnable);
         thread.start();
         //deleteAllMessages();
+
     }
 
     /**
@@ -175,7 +184,7 @@ public class EmailDretva {
             if (nwtisMessages.size() > 0) {
                 moveMessagesToInbox(store, nwtisMessages, folder, folderName);
                 deleteMessagesFromInbox(nwtisMessages);
-                sendJmsMessage(nwtisMessages.size(), start);                
+                sendJmsMessage(nwtisMessages.size(), start);
             }
             folder.close(true);
             store.close();
@@ -183,26 +192,31 @@ public class EmailDretva {
             Logger.getLogger(EmailDretva.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-  
-    public void sendJmsMessage(int numOfMessages, long start){
-        long duration = System.currentTimeMillis()-start;
+
+    public void sendJmsMessage(int numOfMessages, long start) {
+        long duration = System.currentTimeMillis() - start;
         Date currentJMSDate = new Date();
-        
-        JMS jms = new JMS(previousJMSDate,currentJMSDate, duration, numOfMessages);
+
+        EmailJMS jms = new EmailJMS(previousJMSDate, currentJMSDate, duration, numOfMessages);
         sendJMSMessageToNWTiS_alemartin_1(jms);
-        previousJMSDate = currentJMSDate;        
+        previousJMSDate = currentJMSDate;
     }
-    
-    private void sendJMSMessageToNWTiS_alemartin_1(JMS jms){
-        /*try {
-            ObjectMessage obj = context.createObjectMessage();
-            obj.setObject(jms);
-            context.createProducer().send(myQueue, obj);
+
+    private void sendJMSMessageToNWTiS_alemartin_1(EmailJMS jms) {       
+        try {
+            Connection connection = connectionFactory.createConnection();
+            javax.jms.Session session = connection.createSession(false, javax.jms.Session.AUTO_ACKNOWLEDGE);
+            MessageProducer messageProducer = session.createProducer(myQueue);
+            ObjectMessage message = session.createObjectMessage();
+            message.setObject(jms);
+            messageProducer.send(message);
+            messageProducer.close();
+            connection.close();
         } catch (JMSException ex) {
             Logger.getLogger(EmailDretva.class.getName()).log(Level.SEVERE, null, ex);
-        }*/
+        }
     }
-    
+
     /**
      * Check if message is of type NWTIS
      *

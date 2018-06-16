@@ -12,41 +12,62 @@ import java.util.Date;
  *
  * @author alemarti
  */
-public class JMS implements Serializable {
+public class EmailJMS implements Serializable {
 
-    private static int id;
+    private String id;
     private Date previousJMSDate;
     private Date currentJMSDate;
     private long iterationDuration;
     private int msgsNumber;
 
-    public JMS(Date previousJMSDate, Date currentJMSDate, long iterationDuration, int msgsNumber) {
-        id++;
+    public EmailJMS(Date previousJMSDate, Date currentJMSDate, long iterationDuration, int msgsNumber) {
         this.previousJMSDate = previousJMSDate;
         this.currentJMSDate = currentJMSDate;
         this.iterationDuration = iterationDuration;
         this.msgsNumber = msgsNumber;
     }
 
-    public static int getId() {
+    public String getId() {
         return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public Date getPreviousJMSDate() {
         return previousJMSDate;
     }
 
+    public void setPreviousJMSDate(Date previousJMSDate) {
+        this.previousJMSDate = previousJMSDate;
+    }
+
     public Date getCurrentJMSDate() {
         return currentJMSDate;
+    }
+
+    public void setCurrentJMSDate(Date currentJMSDate) {
+        this.currentJMSDate = currentJMSDate;
     }
 
     public long getIterationDuration() {
         return iterationDuration;
     }
 
+    public void setIterationDuration(long iterationDuration) {
+        this.iterationDuration = iterationDuration;
+    }
+
     public int getMsgsNumber() {
         return msgsNumber;
     }
+
+    public void setMsgsNumber(int msgsNumber) {
+        this.msgsNumber = msgsNumber;
+    }
+
+    
 
     @Override
     public String toString() {
