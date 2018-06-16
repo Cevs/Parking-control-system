@@ -29,7 +29,7 @@ import org.foi.nwtis.alemartin.web.podaci.EmailJMS;
 
 /**
  *
- * @author TOSHIBA
+ * @author alemartin
  */
 @Singleton
 @LocalBean
@@ -40,7 +40,6 @@ public class JMSMessages {
     private String emailFile;
 
     public JMSMessages() {
-        boolean b = true;
     }
 
     @PostConstruct
@@ -55,9 +54,13 @@ public class JMSMessages {
         } 
     }
 
+    public List<EmailJMS> getEmailMessages() {
+        return emailMessages;
+    }
+    
+   
     public void addEmail(EmailJMS msg) {
         emailMessages.add(msg);
-        //WebSocketSOPA.emailCallback();
     }
 
     public void deleteEmail(String msgId) {
@@ -65,7 +68,6 @@ public class JMSMessages {
 
         while (it.hasNext()) {
             EmailJMS msg = (EmailJMS) it.next();
-            //Da li ce ova usporedba raditi
             if (msg.getId().equals(msgId)) {
                 it.remove();
             }
@@ -76,6 +78,7 @@ public class JMSMessages {
         try (FileInputStream fis = new FileInputStream(emailFile);
                 ObjectInputStream ois = new ObjectInputStream(fis)) {
             this.emailMessages = (ArrayList<EmailJMS>) ois.readObject();
+            boolean b = true;
         } catch (IOException ex) {
             Logger.getLogger(JMSMessages.class.getName()).log(Level.SEVERE, null, ex);
         } catch (ClassNotFoundException ex) {

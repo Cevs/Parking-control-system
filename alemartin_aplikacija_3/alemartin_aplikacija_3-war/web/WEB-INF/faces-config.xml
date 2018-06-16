@@ -9,6 +9,24 @@
             <from-outcome>index</from-outcome>
             <to-view-id>/index.xhtml</to-view-id>
             <redirect/>
+        </navigation-case>     
+    </navigation-rule>
+    <navigation-rule>
+        <from-view-id>/index.xhtml</from-view-id>
+        <navigation-case>
+            <from-action>#{index.jmsEmails()}</from-action>
+            <from-outcome>jmsEmails</from-outcome>
+            <to-view-id>/viewEmailJMS.xhtml</to-view-id>
+            <redirect/>
+        </navigation-case>
+    </navigation-rule>
+    <navigation-rule>
+        <from-view-id>/viewEmailJMS.xhtml</from-view-id>
+        <navigation-case>
+            <from-action>#{viewEmailJMS.home()}</from-action>
+            <from-outcome>home</from-outcome>
+            <to-view-id>/index.xhtml</to-view-id>
+            <redirect/>
         </navigation-case>
     </navigation-rule>
 </faces-config>

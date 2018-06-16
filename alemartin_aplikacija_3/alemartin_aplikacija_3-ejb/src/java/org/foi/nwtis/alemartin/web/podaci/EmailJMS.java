@@ -18,13 +18,13 @@ public class EmailJMS implements Serializable {
     private Date previousJMSDate;
     private Date currentJMSDate;
     private long iterationDuration;
-    private int msgsNumber;
+    private int numberOfEmails;
 
-    public EmailJMS(Date previousJMSDate, Date currentJMSDate, long iterationDuration, int msgsNumber) {
+    public EmailJMS(Date previousJMSDate, Date currentJMSDate, long iterationDuration, int numberOfEmails) {
         this.previousJMSDate = previousJMSDate;
         this.currentJMSDate = currentJMSDate;
         this.iterationDuration = iterationDuration;
-        this.msgsNumber = msgsNumber;
+        this.numberOfEmails = numberOfEmails;
     }
 
     public String getId() {
@@ -59,17 +59,15 @@ public class EmailJMS implements Serializable {
         this.iterationDuration = iterationDuration;
     }
 
-    public int getMsgsNumber() {
-        return msgsNumber;
+    public int getNumberOfEmails() {
+        return numberOfEmails;
     }
 
-    public void setMsgsNumber(int msgsNumber) {
-        this.msgsNumber = msgsNumber;
+    public void setNumberOfEmails(int numberOfEmails) {
+        this.numberOfEmails = numberOfEmails;
     }
 
    
-    
-
     @Override
     public String toString() {
         return "EmailJMS{"
@@ -77,6 +75,6 @@ public class EmailJMS implements Serializable {
                 + "vrijemePrethodnePoruke=" + previousJMSDate + ", "
                 + "vrijemeTrenutnePoruke=" + currentJMSDate + ", "
                 + "vrijemeTrajanjaIteracije=" + iterationDuration + ", "
-                + "brojNwtisMailova=" + msgsNumber + "}";
+                + "brojNwtisMailova=" + numberOfEmails + "}";
     }
 }
