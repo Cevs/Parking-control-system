@@ -42,6 +42,7 @@ import org.foi.nwtis.alemartin.konfiguracije.NeispravnaKonfiguracija;
 import org.foi.nwtis.alemartin.konfiguracije.NemaKonfiguracije;
 import org.foi.nwtis.alemartin.web.podaci.JMS;
 
+
 /**
  *
  * @author alemartin
@@ -51,12 +52,14 @@ import org.foi.nwtis.alemartin.web.podaci.JMS;
 @LocalBean
 public class EmailDretva {
     
-    @Resource(mappedName = "jms/NWTiS_alemartin_1")
-    private Queue myQueue;
-    
     @Inject
     @JMSConnectionFactory("jms/NWTiS_alemartin_1Factory")
     private JMSContext context;
+    
+    @Resource(mappedName = "jms/NWTiS_alemartin_1")
+    private Queue myQueue;
+    
+    
 
     private String serverIp;
     private String userAccount;
@@ -191,13 +194,13 @@ public class EmailDretva {
     }
     
     private void sendJMSMessageToNWTiS_alemartin_1(JMS jms){
-        try {
+        /*try {
             ObjectMessage obj = context.createObjectMessage();
             obj.setObject(jms);
             context.createProducer().send(myQueue, obj);
         } catch (JMSException ex) {
             Logger.getLogger(EmailDretva.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        }*/
     }
     
     /**
