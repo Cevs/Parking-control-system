@@ -8,12 +8,17 @@ package org.foi.nwtis.alemartin.web.zrna;
 import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
+import java.io.StringReader;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.context.FacesContext;
+import javax.json.Json;
+import javax.json.JsonObject;
+import javax.json.JsonReader;
 import javax.servlet.http.HttpSession;
+import org.foi.nwtis.alemartin.rest.klijenti.Application3REST;
 import org.foi.nwtis.alemartin.socket.SocketClient;
-import org.foi.nwtis.alemartin.web.podaci.SessionUtils;
+import org.foi.nwtis.alemartin.web.utils.SessionUtils;
 
 /**
  *
@@ -32,8 +37,8 @@ public class Login implements Serializable {
     public Login() {
     }
 
-    public String authentication() {
-        if (userAuthentication()) {
+    public String login() {
+        if (authentication()) {
             HttpSession session = SessionUtils.getSession();
             session.setAttribute("username", username);
             session.setAttribute("password", password);
@@ -54,18 +59,18 @@ public class Login implements Serializable {
         return "login";
     }
 
-    public boolean userAuthentication() {
-        String request = "KORISNIK " + username + "; LOZINKA " + password + ";";
-        SocketClient socket = new SocketClient();
-        String response = socket.sendRequest(request);
+    public boolean authentication() {
+        Application3REST app3REST = new Application3REST(username, password);
+        String response = app3REST.authentication();
 
-        if (response != null) {
-            if (response.contains("OK 10;")) {
-                return true;
-            }
+        JsonReader jsonReader = Json.createReader(new StringReader(response));
+        JsonObject responseObject = jsonReader.readObject();
+        String code = responseObject.getString("status");
+        if (code.contains("OK")) {
+            return true;
+        } else {
             return false;
         }
-        return false;
     }
 
     public String getUsername() {
