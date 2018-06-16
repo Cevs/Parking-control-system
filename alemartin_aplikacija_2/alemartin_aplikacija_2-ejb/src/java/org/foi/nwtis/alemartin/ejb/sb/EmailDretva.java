@@ -9,15 +9,23 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
+import javax.annotation.Resource;
 import javax.ejb.LocalBean;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
+import javax.inject.Inject;
+import javax.jms.JMSConnectionFactory;
+import javax.jms.JMSContext;
+import javax.jms.JMSException;
+import javax.jms.ObjectMessage;
+import javax.jms.Queue;
 import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonReader;
@@ -32,6 +40,7 @@ import org.foi.nwtis.alemartin.konfiguracije.Konfiguracija;
 import org.foi.nwtis.alemartin.konfiguracije.KonfiguracijaApstraktna;
 import org.foi.nwtis.alemartin.konfiguracije.NeispravnaKonfiguracija;
 import org.foi.nwtis.alemartin.konfiguracije.NemaKonfiguracije;
+import org.foi.nwtis.alemartin.web.podaci.JMS;
 
 /**
  *
@@ -41,6 +50,13 @@ import org.foi.nwtis.alemartin.konfiguracije.NemaKonfiguracije;
 @Startup
 @LocalBean
 public class EmailDretva {
+    
+    @Resource(mappedName = "jms/NWTiS_alemartin_1")
+    private Queue myQueue;
+    
+    @Inject
+    @JMSConnectionFactory("jms/NWTiS_alemartin_1Factory")
+    private JMSContext context;
 
     private String serverIp;
     private String userAccount;
@@ -50,6 +66,7 @@ public class EmailDretva {
     private int interval;
     private volatile boolean work;
     private Thread thread;
+    private Date previousJMSDate = null;
 
     private static final String APP_CONFIGURATION = "/META-INF/NWTiS.app.config.xml";
 
@@ -81,7 +98,7 @@ public class EmailDretva {
 
         Runnable runnable = () -> {
             while (work) {
-                try {
+                try {                   
                     processInbox();
                     Thread.sleep(interval * 1000);
                 } catch (InterruptedException ex) {
@@ -136,6 +153,7 @@ public class EmailDretva {
      */
     public void processInbox() {
         try {
+            long start = System.currentTimeMillis();
             Store store = getStoreConnection();
             Folder folder = store.getFolder("INBOX");
             folder.open(Folder.READ_WRITE);
@@ -154,6 +172,7 @@ public class EmailDretva {
             if (nwtisMessages.size() > 0) {
                 moveMessagesToInbox(store, nwtisMessages, folder, folderName);
                 deleteMessagesFromInbox(nwtisMessages);
+                sendJmsMessage(nwtisMessages.size(), start);                
             }
             folder.close(true);
             store.close();
@@ -162,6 +181,25 @@ public class EmailDretva {
         }
     }
   
+    public void sendJmsMessage(int numOfMessages, long start){
+        long duration = System.currentTimeMillis()-start;
+        Date currentJMSDate = new Date();
+        
+        JMS jms = new JMS(previousJMSDate,currentJMSDate, duration, numOfMessages);
+        sendJMSMessageToNWTiS_alemartin_1(jms);
+        previousJMSDate = currentJMSDate;        
+    }
+    
+    private void sendJMSMessageToNWTiS_alemartin_1(JMS jms){
+        try {
+            ObjectMessage obj = context.createObjectMessage();
+            obj.setObject(jms);
+            context.createProducer().send(myQueue, obj);
+        } catch (JMSException ex) {
+            Logger.getLogger(EmailDretva.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
     /**
      * Check if message is of type NWTIS
      *
