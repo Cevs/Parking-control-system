@@ -25,8 +25,8 @@ public class Index implements Serializable {
     
     /* Navigation */
     
-    public String jmsEmails(){
-        return "jmsEmails";
+    public String profile(){
+        return "profile";
     }
     
 }

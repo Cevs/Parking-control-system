@@ -12,8 +12,12 @@ and open the template in the editor.
     height: 100% !important;
 }
 
-.container{
+.container{   
     height: 100% !important;
+}
+
+.sub-container{
+    margin-top:50px;
 }
 
 body,html, form{
@@ -38,4 +42,8 @@ body,html, form{
 .err{
     font-weight: bold;
     color: red;
+}
+
+.table-column{
+    width: 25%;
 }

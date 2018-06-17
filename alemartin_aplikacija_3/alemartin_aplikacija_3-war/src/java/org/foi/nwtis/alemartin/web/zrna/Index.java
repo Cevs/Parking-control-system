@@ -9,6 +9,7 @@ import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
 
+
 /**
  *
  * @author TOSHIBA
@@ -28,5 +29,8 @@ public class Index implements Serializable {
     public String jmsEmails(){
         return "jmsEmails";
     }
+
+ 
+    
     
 }

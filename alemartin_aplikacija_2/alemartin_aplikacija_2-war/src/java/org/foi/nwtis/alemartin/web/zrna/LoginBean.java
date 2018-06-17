@@ -14,7 +14,6 @@ import javax.inject.Inject;
 import javax.servlet.http.HttpSession;
 import org.foi.nwtis.alemartin.ejb.services.UserService;
 import org.foi.nwtis.alemartin.rest.klijenti.Application3REST;
-import org.foi.nwtis.alemartin.web.podaci.User;
 import org.foi.nwtis.alemartin.web.utils.SessionUtils;
 
 /**
@@ -40,10 +39,10 @@ public class LoginBean implements Serializable {
     }
 
     public String login() {
-        User user = new User(username, password);
-        if (userService.authentication(user)) {
+        if (userService.authentication(username, password)) {
             HttpSession session = SessionUtils.getSession();           
-            session.setAttribute("user", user);
+            session.setAttribute("username", username);
+            session.setAttribute("password", password);
             return "index";
         } else {
             FacesContext.getCurrentInstance().addMessage(

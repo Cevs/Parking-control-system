@@ -6,7 +6,6 @@
 package org.foi.nwtis.alemartin.ejb.services;
 
 import javax.ejb.Local;
-import org.foi.nwtis.alemartin.web.podaci.User;
 
 /**
  *
@@ -14,5 +13,5 @@ import org.foi.nwtis.alemartin.web.podaci.User;
  */
 @Local
 public interface UserService {
-    public boolean authentication(User user);
+    public boolean authentication(String username, String password);
 }

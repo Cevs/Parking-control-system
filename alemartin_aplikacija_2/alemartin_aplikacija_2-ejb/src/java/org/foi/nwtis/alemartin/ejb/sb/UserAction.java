@@ -6,14 +6,14 @@
 package org.foi.nwtis.alemartin.ejb.sb;
 
 import java.io.StringReader;
+import javax.annotation.PostConstruct;
 import javax.ejb.Stateful;
 import javax.ejb.LocalBean;
 import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonReader;
-import javax.servlet.http.HttpSession;
+import org.foi.nwtis.alemartin.ejb.services.UserService;
 import org.foi.nwtis.alemartin.rest.klijenti.Application3REST;
-import org.foi.nwtis.alemartin.web.utils.SessionUtils;
 
 /**
  *
@@ -21,22 +21,44 @@ import org.foi.nwtis.alemartin.web.utils.SessionUtils;
  */
 @Stateful
 @LocalBean
-public class UserService {
-
+public class UserAction implements UserService {
+   
+    private String username;
+    private String password;
+    
+    @PostConstruct
+    private void init(){
+    }
+    
+    @Override
     public boolean authentication(String username, String password) {
         Application3REST app3REST = new Application3REST(username, password);
         String response = app3REST.authentication();
-
         JsonReader jsonReader = Json.createReader(new StringReader(response));
         JsonObject responseObject = jsonReader.readObject();
         String code = responseObject.getString("status");
-        if (code.contains("OK")) {
-            HttpSession session = SessionUtils.getSession();
-            session.setAttribute("username", username);
-            session.setAttribute("password", password);
+        if (code.contains("OK")) {    
+            this.username = username;
+            this.password = password;
             return true;
         } else {
             return false;
         }
     }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }     
 }

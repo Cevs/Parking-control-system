@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <h:head>
+        <title>Profile</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous"/>
+        <h:outputStylesheet library="css" name="main.css"/>
+    </h:head>
+    <body>
+        <h:form>
+            <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+                <div class="collapse navbar-collapse">
+                    <a class="navbar-brand" href="#">Aplikacija 2</a>
+                    <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+                        <li class="nav-item active">
+                            <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+                        </li>
+                        <li class="nav-item">
+                            <h:commandLink class="nav-item nav-link" value="Home" action="#{profile.home()}" />
+                        </li>                
+                    </ul>
+                    <h:outputText value="Login as: #{username}" style="font-size:18px; color: white; padding-right: 10px"/>                   
+                    <h:commandButton class="btn btn-outline-info my-2 my-sm-0" value="Logout" action="#{login.logout()}"/>
+                </div>
+            </nav>
+            <div class="container">
+                <div class="sub-container">
+                    <h1>User information:</h1><br></br>
+                    <table>
+                        <tr>
+                            <td>Id:</td>
+                            <td>
+                                <h:inputText id="userId" value="#{profile.userId}" readonly="true"></h:inputText>
+                            </td>
+                        </tr>
+                         <tr>
+                            <td>Username:</td>
+                            <td>
+                                <h:inputText id="username" value="#{profile.username}" readonly="true"></h:inputText>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Firstname:</td>
+                            <td>
+                                <h:inputText id="firstname" value="#{profile.firstname}"></h:inputText>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Lastname:</td>
+                            <td>
+                                <h:inputText id="lastname" value="#{profile.lastname}"></h:inputText>
+                            </td>
+                        </tr>                      
+                        <tr>
+                            <td></td>
+                            <td><h:commandButton class="btn btn-dark w-100" value="Update" action="#{profile.updateProfileInfo()}"></h:commandButton></td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td align="center"><h:messages globalOnly="true" id="messages" errorClass="err" warnClass="warn" infoClass="info" layout="table"/></td>
+                        </tr>
+                    </table>
+                  
+                    <br></br><br></br>
+                    <div>
+                        <h:dataTable id="users" value="#{profile.usersToShow}" var = "u" 
+                                     style ="word-wrap:break-word;"
+                                     class="table table-hover"
+                                     columnClasses="table-column"
+                                     headerClass ="table-column">
+                            <h:column>
+                                <f:facet name="header"><h:outputText value="Id"/></f:facet>
+                                <h:outputText  value="#{u.id}"/>     
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header"><h:outputText value="Username"/></f:facet>
+                                <h:outputText value="#{u.username}"/>     
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header"><h:outputText value="Firstname"/></f:facet>
+                                <h:outputText  value="#{u.firstname}"/>     
+                            </h:column>
+                            <h:column >
+                                <f:facet name="header"><h:outputText value="Lastname"/></f:facet>
+                                <h:outputText  value="#{u.lastname}"/>     
+                            </h:column>                   
+                        </h:dataTable>
+                        <div class="w-50 mx-auto">
+                            <h:commandButton id ="previous" class="btn btn-outline-dark mx-auto" 
+                                             style="width:45%; margin-right: 5px !important;"
+                                             value="Previous" 
+                                             disabled="#{!profile.showButtonPrevious}"
+                                             action="#{profile.previousPage()}">
+                                <f:ajax render = "users next previous"/>
+                            </h:commandButton>
+
+                            <h:commandButton id="next" class="btn btn-outline-dark mx-auto"  value="Next" 
+                                             style="width:45%;"
+                                             disabled="#{!profile.showButtonNext}"
+                                             action="#{profile.nextPage()}">
+                                <f:ajax render = "users next previous"/>
+                            </h:commandButton>
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+        </h:form>
+    </body>
+</html>

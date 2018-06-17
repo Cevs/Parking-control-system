@@ -12,7 +12,8 @@ import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpSession;
-import org.foi.nwtis.alemartin.ejb.sb.UserService;
+import org.foi.nwtis.alemartin.ejb.sb.UserAction;
+import org.foi.nwtis.alemartin.web.podaci.User;
 import org.foi.nwtis.alemartin.web.utils.SessionUtils;
 
 /**
@@ -24,7 +25,7 @@ import org.foi.nwtis.alemartin.web.utils.SessionUtils;
 public class Login implements Serializable {
 
     @EJB
-    UserService userService;
+    UserAction userAction;
     
     private String username;
     private String password;
@@ -36,7 +37,10 @@ public class Login implements Serializable {
     }
 
     public String login() {
-        if (userService.authentication(username, password)) {
+        User user = new User(username, password);
+        if (userAction.authentication(user)) {
+            HttpSession session = SessionUtils.getSession();
+            session.setAttribute("user", user);
             return "index";
         } else {
             FacesContext.getCurrentInstance().addMessage(

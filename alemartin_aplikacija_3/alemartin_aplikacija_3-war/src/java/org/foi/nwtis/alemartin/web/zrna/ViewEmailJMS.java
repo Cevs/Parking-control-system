@@ -10,9 +10,9 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.ejb.EJB;
 import javax.inject.Named;
-import javax.enterprise.context.Dependent;
 import javax.enterprise.context.SessionScoped;
 import org.foi.nwtis.alemartin.ejb.sb.JMSMessages;
+import org.foi.nwtis.alemartin.ejb.sb.UserAction;
 import org.foi.nwtis.alemartin.web.podaci.EmailJMS;
 
 /**
@@ -21,13 +21,14 @@ import org.foi.nwtis.alemartin.web.podaci.EmailJMS;
  */
 @Named(value = "viewEmailJMS")
 @SessionScoped
-public class ViewEmailJMS implements Serializable{
-    
+public class ViewEmailJMS implements Serializable {
+
+
     @EJB
     JMSMessages jmsMessages;
-    
+
     private List<EmailJMS> jmsEmails = new ArrayList<>();
-    
+
     private String idDelete;
 
     /**
@@ -35,9 +36,8 @@ public class ViewEmailJMS implements Serializable{
      */
     public ViewEmailJMS() {
     }
-    
-    
-    public void deleteEmailJMS(){
+
+    public void deleteEmailJMS() {
         jmsMessages.deleteEmail(idDelete);
     }
 
@@ -45,7 +45,7 @@ public class ViewEmailJMS implements Serializable{
         jmsEmails = jmsMessages.getEmailMessages();
         return jmsEmails;
     }
-    
+
     public void setJmsEmails(List<EmailJMS> jmsEmails) {
         this.jmsEmails = jmsEmails;
     }
@@ -56,11 +56,12 @@ public class ViewEmailJMS implements Serializable{
 
     public void setIdDelete(String idDelete) {
         this.idDelete = idDelete;
-    }     
-    
+    }
+
     /* Navigation */
-    public String home(){
+    public String home() {
         return "home";
     }
+
     
 }

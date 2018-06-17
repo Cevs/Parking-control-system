@@ -32,13 +32,13 @@ and open the template in the editor.
                             <a class="nav-link" href="#">Pregled parkirališta</a>
                         </li>
                     </ul>
-                    <h:outputText value="Login as: #{username}" style="font-size:18px; color: white; padding-right: 10px"/>                   
+                    <h:outputText value="Login as: #{user.username}" style="font-size:18px; color: white; padding-right: 10px"/>                   
                     <h:commandButton class="btn btn-outline-info my-2 my-sm-0" value="Logout" action="#{login.logout()}"/>
                 </div>
             </nav>
 
             <div class="container">
-                <h1>Welcome #{username}</h1>
+                <h1>Welcome #{user.username}</h1>
             </div>
         </h:form>
         <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>

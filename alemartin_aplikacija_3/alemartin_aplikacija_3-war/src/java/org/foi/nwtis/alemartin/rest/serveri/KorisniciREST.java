@@ -164,7 +164,7 @@ public class KorisniciREST {
             String lastname = jsonObject.getString("prezime");
             String username = jsonObject.getString("korisnickoIme");
             String password = jsonObject.getString("lozinka");
-            String subCommand = "DODAJ '" + firstname + "' '" + lastname + "'";
+            String subCommand = "DODAJ '" + lastname + "' '" + firstname + "'";
 
             String request = createRequest(username, password, subCommand);
             SocketClient socket = new SocketClient();
@@ -207,7 +207,7 @@ public class KorisniciREST {
             JsonObject jsonObject = jsonReader.readObject();
             String firstname = jsonObject.getString("ime");
             String lastname = jsonObject.getString("prezime");
-            String subCommand = "AZURIRAJ '" + firstname + "' '" + lastname + "'";
+            String subCommand = "AZURIRAJ '" + lastname + "' '" + firstname + "'";
 
             String request = createRequest(username, "notNeeded", subCommand);
             SocketClient socket = new SocketClient();
@@ -245,7 +245,7 @@ public class KorisniciREST {
             JsonObject jsonObject = jsonReader.readObject();
             String firstname = jsonObject.getString("ime");
             String lastname = jsonObject.getString("prezime");
-            String subCommand = "AZURIRAJ '" + firstname + "' '" + lastname + "'";
+            String subCommand = "AZURIRAJ '" + lastname + "' '" + firstname + "'";
 
             String request = createRequest(username, password, subCommand);
             SocketClient socket = new SocketClient();

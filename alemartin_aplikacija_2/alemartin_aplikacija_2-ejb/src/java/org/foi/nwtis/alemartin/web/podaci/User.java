@@ -7,16 +7,28 @@ package org.foi.nwtis.alemartin.web.podaci;
 
 /**
  *
- * @author TOSHIBA
+ * @author alemartin
  */
 public class User {
-
+    private int id;
     private String username;
-    private String passworod;
+    private String firstname;
+    private String lastname;
 
-    public User(String username, String passworod) {
+    public User(int id, String username, String firstname, String lastname) {
+        this.id = id;
         this.username = username;
-        this.passworod = passworod;
+        this.firstname = firstname;
+        this.lastname = lastname;
+    }
+
+       
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getUsername() {
@@ -27,11 +39,19 @@ public class User {
         this.username = username;
     }
 
-    public String getPassworod() {
-        return passworod;
+    public String getFirstname() {
+        return firstname;
     }
 
-    public void setPassworod(String passworod) {
-        this.passworod = passworod;
+    public void setFirstname(String firstname) {
+        this.firstname = firstname;
+    }
+
+    public String getLastname() {
+        return lastname;
+    }
+
+    public void setLastname(String lastname) {
+        this.lastname = lastname;
     }
 }

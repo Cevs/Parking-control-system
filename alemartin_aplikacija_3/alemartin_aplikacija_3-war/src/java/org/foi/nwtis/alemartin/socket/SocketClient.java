@@ -9,8 +9,10 @@ import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.Socket;
+import java.nio.charset.Charset;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.foi.nwtis.alemartin.konfiguracije.Konfiguracija;
@@ -36,8 +38,8 @@ public class SocketClient {
 
         try (Socket clientSocket = new Socket(ipAdress, port);
                 BufferedReader inFromServer = new BufferedReader(new InputStreamReader(clientSocket.getInputStream(), "UTF-8"));
-                DataOutputStream outToServer = new DataOutputStream(clientSocket.getOutputStream())) {        
-            outToServer.write(request.getBytes());
+                OutputStream outToServer = clientSocket.getOutputStream()) {  
+            outToServer.write(request.getBytes(Charset.forName("UTF-8")));
             clientSocket.shutdownOutput();          
             String clientResponse = inFromServer.readLine();
             return clientResponse;

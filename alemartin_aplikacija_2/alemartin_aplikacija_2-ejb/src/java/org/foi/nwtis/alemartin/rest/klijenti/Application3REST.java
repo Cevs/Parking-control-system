@@ -5,6 +5,7 @@
  */
 package org.foi.nwtis.alemartin.rest.klijenti;
 
+import java.text.MessageFormat;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
@@ -39,7 +40,15 @@ public class Application3REST {
         return resource.request(MediaType.APPLICATION_JSON).get(String.class); // ili .toString() ? 
     }
         
-    public String addUser(Object requestEntitiy){
-        return webTarget.request(MediaType.APPLICATION_JSON).post(Entity.entity(requestEntitiy, MediaType.APPLICATION_JSON), String.class);
+    public String addUser(Object requestEntity){
+        return webTarget.request(MediaType.APPLICATION_JSON).post(Entity.entity(requestEntity, MediaType.APPLICATION_JSON), String.class);
+    }
+    
+    public String getAllUsers(){
+        return webTarget.request(MediaType.APPLICATION_JSON).get(String.class);
+    }
+    
+    public String updateUser(Object requestEntity){
+        return webTarget.request(MediaType.APPLICATION_JSON).put(Entity.entity(requestEntity, "application/json; charset=UTF-8"),String.class);
     }
 }
