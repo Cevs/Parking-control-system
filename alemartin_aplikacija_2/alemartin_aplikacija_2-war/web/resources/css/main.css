@@ -25,3 +25,17 @@ body,html, form{
     border-color: #17a2b8 !important;
 }
 
+.info{
+    font-weight: bold;
+    color: green;
+}
+
+.warn{
+    font-weight: bold;
+    color: yellow;
+}
+
+.err{
+    font-weight: bold;
+    color: red;
+}

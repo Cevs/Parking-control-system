@@ -60,6 +60,10 @@ public class LoginBean implements Serializable {
         session.invalidate();
         return "login";
     }
+    
+    public String registration(){
+        return "registration";
+    }
 
     public String getUsername() {
         return username;

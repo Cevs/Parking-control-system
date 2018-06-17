@@ -7,6 +7,7 @@ package org.foi.nwtis.alemartin.rest.klijenti;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
@@ -38,4 +39,7 @@ public class Application3REST {
         return resource.request(MediaType.APPLICATION_JSON).get(String.class); // ili .toString() ? 
     }
         
+    public String addUser(Object requestEntitiy){
+        return webTarget.request(MediaType.APPLICATION_JSON).post(Entity.entity(requestEntitiy, MediaType.APPLICATION_JSON), String.class);
+    }
 }
