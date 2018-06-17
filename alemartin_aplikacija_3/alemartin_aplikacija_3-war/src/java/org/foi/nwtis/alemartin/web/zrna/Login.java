@@ -8,16 +8,11 @@ package org.foi.nwtis.alemartin.web.zrna;
 import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
-import java.io.StringReader;
+import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
-import javax.faces.bean.ManagedBean;
 import javax.faces.context.FacesContext;
-import javax.json.Json;
-import javax.json.JsonObject;
-import javax.json.JsonReader;
 import javax.servlet.http.HttpSession;
-import org.foi.nwtis.alemartin.rest.klijenti.Application3REST;
-import org.foi.nwtis.alemartin.socket.SocketClient;
+import org.foi.nwtis.alemartin.ejb.sb.UserService;
 import org.foi.nwtis.alemartin.web.utils.SessionUtils;
 
 /**
@@ -28,6 +23,9 @@ import org.foi.nwtis.alemartin.web.utils.SessionUtils;
 @SessionScoped
 public class Login implements Serializable {
 
+    @EJB
+    UserService userService;
+    
     private String username;
     private String password;
 
@@ -38,10 +36,7 @@ public class Login implements Serializable {
     }
 
     public String login() {
-        if (authentication()) {
-            HttpSession session = SessionUtils.getSession();
-            session.setAttribute("username", username);
-            session.setAttribute("password", password);
+        if (userService.authentication(username, password)) {
             return "index";
         } else {
             FacesContext.getCurrentInstance().addMessage(
@@ -57,20 +52,6 @@ public class Login implements Serializable {
         HttpSession session = SessionUtils.getSession();
         session.invalidate();
         return "login";
-    }
-
-    public boolean authentication() {
-        Application3REST app3REST = new Application3REST(username, password);
-        String response = app3REST.authentication();
-
-        JsonReader jsonReader = Json.createReader(new StringReader(response));
-        JsonObject responseObject = jsonReader.readObject();
-        String code = responseObject.getString("status");
-        if (code.contains("OK")) {
-            return true;
-        } else {
-            return false;
-        }
     }
 
     public String getUsername() {
