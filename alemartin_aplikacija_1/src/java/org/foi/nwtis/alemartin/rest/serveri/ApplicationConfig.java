@@ -29,7 +29,7 @@ public class ApplicationConfig extends Application {
      * If required, comment out calling this method in getClasses().
      */
     private void addRestResourceClasses(Set<Class<?>> resources) {
-        resources.add(org.foi.nwtis.alemartin.rest.serveri.ParkiralisteREST.class);
+        resources.add(org.foi.nwtis.alemartin.rest.serveri.Application1REST.class);
     }
     
 }
