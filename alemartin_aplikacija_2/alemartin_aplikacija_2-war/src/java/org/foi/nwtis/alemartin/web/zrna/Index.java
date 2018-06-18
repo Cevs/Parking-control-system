@@ -29,4 +29,8 @@ public class Index implements Serializable {
         return "profile";
     }
     
+    public String status(){
+        return "status";
+    }
+    
 }

@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <h:head>
+        <title>Status</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous"/>
+        <h:outputStylesheet library="css" name="main.css"/>
+    </h:head>
+    <body>
+        <h:form>
+            <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+                <div class="collapse navbar-collapse">
+                    <a class="navbar-brand" href="#">Aplikacija 2</a>
+                    <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+                        <li class="nav-item">
+                            <h:commandLink class="nav-item nav-link" value="Home" action="#{status.home()}" />
+                        </li>  
+                        <li class="nav-item">
+                            <h:commandLink class="nav-item nav-link" value="Profile" action="#{status.profile()}" />
+                        </li>    
+                        <li class="nav-item active">
+                            <h:commandLink class="nav-item nav-link" value="Status" action="#" />
+                        </li>  
+                    </ul>
+                    <h:outputText value="Login as: #{username}" style="font-size:18px; color: white; padding-right: 10px"/>                   
+                    <h:commandButton class="btn btn-outline-info my-2 my-sm-0" value="Logout" action="#{login.logout()}"/>
+                </div>
+            </nav>
+            <div class="container">
+                <div class="sub-container">
+                    <!-- Server Status-->
+                    <table>
+                        <tr>
+                            <td><h3>Server Status:</h3></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <h:outputText id="serverStatus"  style="font-size: 20px;" value="#{status.serverStatus}"/>
+                            </td>
+                        </tr>
+                    </table>
+                    <br></br>
+                    <table>                  
+                        <tr>
+                            <td style="width:33%">
+                                <h:commandButton class="btn btn-outline-success w-100" style="font-size: 20px;"  
+                                                 value="Kreni" action="#{status.startServer()}" disabled="#{status.buttonsDisabled}">
+                                    <f:ajax render="serverStatus"></f:ajax>
+                                </h:commandButton>
+                            </td> 
+                            <td style="width:33%">
+                                <h:commandButton  class="btn btn-outline-warning w-100" style="font-size: 20px;" 
+                                                  value="Pauza" action="#{status.pauseServer()}" disabled="#{status.buttonsDisabled}">
+                                    <f:ajax render="serverStatus"></f:ajax>
+                                </h:commandButton>
+                            </td>
+                            <td style="width:33%">
+                                <h:commandButton class="btn btn-outline-danger w-100" style="font-size: 20px;" 
+                                                 value="Stani" action="#{status.stopServer()}" disabled="#{status.buttonsDisabled}">
+                                    <f:ajax render="serverStatus"></f:ajax>
+                                </h:commandButton>
+                            </td>
+                        </tr>
+                        <tr>                            
+                            <td style="width:33%">
+                                <h:commandButton class="btn btn-outline-primary w-100" style="font-size: 20px;"  
+                                                 value="Aktivno" action="#{status.activeServer()}" disabled="#{status.buttonsDisabled}">
+                                    <f:ajax render="serverStatus"></f:ajax>
+                                </h:commandButton>
+                            </td>
+                            <td style="width:33%">
+                                <h:commandButton class="btn btn-outline-info w-100" style="font-size: 20px;" 
+                                                 value="Pasivno" action="#{status.passiveServer()}" disabled="#{status.buttonsDisabled}">
+                                    <f:ajax render="serverStatus"></f:ajax>
+                                </h:commandButton>
+                            </td>
+                            <td style="width:33%">
+                                <h:commandButton class="btn btn-outline-dark w-100" style="font-size: 20px;"  
+                                                 value="Status" action="#{status.getCurrentServerStatus()}" disabled="#{status.buttonsDisabled}">
+                                    <f:ajax render="serverStatus"></f:ajax>
+                                </h:commandButton>
+                            </td>
+                        </tr>
+                    </table>
+                    <!-- Group Status-->
+                    <br></br>
+                    <table>
+                        <tr>
+                            <td><h3>Group Status:</h3></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <h:outputText id="groupStatus"  style="font-size: 20px;" value="#{status.groupStatus}"/>
+                            </td>
+                        </tr>
+                    </table>
+                    <br></br>
+                    <table>  
+                        <tr>   
+                            <td style="width:50%">
+                                <h:commandButton class="btn btn-outline-success w-100" style="font-size: 20px;"  
+                                                 value="Dodaj" action="#{status.registerGroup()}">
+                                    <f:ajax render="groupStatus"></f:ajax>
+                                </h:commandButton>
+                            </td> 
+                            <td style="width:50%">                               
+                                <h:commandButton class="btn btn-outline-primary w-100" style="font-size: 20px;"  
+                                                 value="Kreni" action="#{status.activeGrup()}" disabled="#{status.buttonsDisabled}">
+                                    <f:ajax render="groupStatus"></f:ajax>
+                                </h:commandButton>
+                            </td>                                                 
+                        </tr>
+                        <tr>
+                            <td style="width:50%">
+                                <h:commandButton class="btn btn-outline-warning w-100" style="font-size: 20px;" 
+                                                 value="Pauza" action="#{status.blockGroup()}" disabled="#{status.buttonsDisabled}">
+                                    <f:ajax render="groupStatus"></f:ajax>
+                                </h:commandButton>
+                            </td>  
+                            <td style="width:50%">
+                                <h:commandButton  class="btn btn-outline-danger w-100" style="font-size: 20px;" 
+                                                  value="Prekid" action="#{status.unregisterGroup()}" disabled="#{status.buttonsDisabled}">
+                                    <f:ajax render="groupStatus"></f:ajax>
+                                </h:commandButton>
+                            </td>
+
+                        </tr>                      
+                    </table>
+                </div>
+            </div>
+        </h:form>
+    </body>
+</html>

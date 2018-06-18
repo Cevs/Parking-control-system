@@ -250,8 +250,11 @@ public class Profile implements Serializable {
         this.showButtonPrevious = showButtonPrevious;
     }
 
-    public String bome() {
+    public String home() {
         return "home";
     }
-
+    
+    public String status(){
+        return "status";
+    }
 }

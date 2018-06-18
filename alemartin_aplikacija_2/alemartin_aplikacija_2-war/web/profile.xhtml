@@ -22,12 +22,15 @@ and open the template in the editor.
                 <div class="collapse navbar-collapse">
                     <a class="navbar-brand" href="#">Aplikacija 2</a>
                     <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
-                        <li class="nav-item active">
-                            <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
-                        </li>
                         <li class="nav-item">
                             <h:commandLink class="nav-item nav-link" value="Home" action="#{profile.home()}" />
-                        </li>                
+                        </li>   
+                        <li class="nav-item active">
+                            <h:commandLink class="nav-item nav-link" value="Profile" action="#" />
+                        </li>
+                        <li class="nav-item">
+                            <h:commandLink class="nav-item nav-link" value="Status" action="#{profile.status()}"/>
+                        </li>   
                     </ul>
                     <h:outputText value="Login as: #{username}" style="font-size:18px; color: white; padding-right: 10px"/>                   
                     <h:commandButton class="btn btn-outline-info my-2 my-sm-0" value="Logout" action="#{login.logout()}"/>
