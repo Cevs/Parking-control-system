@@ -11,6 +11,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.nio.charset.Charset;
 import java.sql.Connection;
@@ -51,6 +52,7 @@ public class KlijentSocket implements Runnable {
     private static Method metoda;
     private static AtomicBoolean radi = new AtomicBoolean(true);
     private static AtomicBoolean flagStop = new AtomicBoolean(false);
+    private String status;
 
     public KlijentSocket(Socket klijetSocket) {
         this.klijetSocket = klijetSocket;
@@ -62,8 +64,13 @@ public class KlijentSocket implements Runnable {
             try (
                     BufferedReader odKlijenta = new BufferedReader(new InputStreamReader(klijetSocket.getInputStream(), "UTF-8"));
                     OutputStream doKlijenta = klijetSocket.getOutputStream()) {
+                String ip=(((InetSocketAddress) klijetSocket.getRemoteSocketAddress()).getAddress()).toString().replace("/","");
+                long start = System.currentTimeMillis();
                 String komanda = odKlijenta.readLine();
                 String odgovor = obradiKomandu(komanda);
+                long end = System.currentTimeMillis();
+                long elapsed = end-start;
+                BazaPodataka.UpisDnevnika(KomandaUtils.dohvatiKorisnickoIme(komanda), "", ip, "socket", komanda, elapsed, odgovor);
                 doKlijenta.write(odgovor.getBytes(Charset.forName("UTF-8")));
             } catch (Exception ex) {
                 Logger.getLogger(KlijentSocket.class.getName()).log(Level.SEVERE, null, ex);
@@ -117,7 +124,6 @@ public class KlijentSocket implements Runnable {
             return "OK 10;";     //Komanda je sadržavala samo autorizacijske podatke
         }
 
-        BazaPodataka.UpisDnevnika(KomandaUtils.dohvatiKorisnickoIme(komanda), "socket", komanda);
         metoda = this.getClass().getDeclaredMethod(akcija);
         metoda.setAccessible(true);
         String odgovor = (String) metoda.invoke(this);

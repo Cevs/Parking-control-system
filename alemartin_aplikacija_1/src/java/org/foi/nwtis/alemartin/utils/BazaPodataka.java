@@ -106,21 +106,22 @@ public class BazaPodataka {
         return "";
     }
 
-    public static void UpisDnevnika(String korisnickoIme, String vrstaZahtjeva, String sadrzajZahtjeva) {
-        String sqlSelect = "SELECT *FROM korisnici where korisnicko_ime = ?";
-        String sqlInsert = "INSERT INTO dnevnik (korisnik, vrsta_zahtjeva, sadrzaj_zahtjeva) VALUES (?, ?, ?)";
-    
+    public static void UpisDnevnika(String korisnickoIme, String url, String ip, String vrstaZahtjeva, String sadrzajZahtjeva, long trajanje, String status) {
+        String sqlInsert = "INSERT INTO dnevnik (korisnik, url, ipadresa, vrsta_zahtjeva, sadrzaj_zahtjeva, vrijeme, trajanje, status) "
+                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";  
         try (Connection conn = getConnection();
-                PreparedStatement ps = conn.prepareStatement(sqlSelect);
-                PreparedStatement ps2 = conn.prepareStatement(sqlInsert)) {
+                PreparedStatement ps = conn.prepareStatement(sqlInsert);) {      
             ps.setString(1, korisnickoIme);
-            ResultSet rs = ps.executeQuery();
-            rs.next();
-            int idKorisnik = rs.getInt("id");
-            ps2.setInt(1, idKorisnik);
-            ps2.setString(2, vrstaZahtjeva);
-            ps2.setString(3, sadrzajZahtjeva);
-            ps2.executeUpdate();
+            ps.setString(2, url);
+            ps.setString(3, ip);
+            ps.setString(4, vrstaZahtjeva);
+            ps.setString(5, sadrzajZahtjeva);
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            String date = sdf.format(new Date());
+            ps.setString(6, date);
+            ps.setLong(7, trajanje);
+            ps.setString(8, status);
+            ps.executeUpdate();
         } catch (SQLException ex) {
             Logger.getLogger(BazaPodataka.class.getName()).log(Level.SEVERE, null, ex);
         }
