@@ -59,14 +59,7 @@ public class EmailDretva {
 
     @Resource(mappedName = "jms/NWTiS_alemartin_1")
     private Queue myQueue;
-
-    /*@Inject
-    @JMSConnectionFactory("jms/NWTiS_alemartin_1Factory")
-    private ConnectionFactory connectionFactory;*/
-    // private JMSContext context;
-    
-    
-
+ 
     private String serverIp;
     private String userAccount;
     private String userPassword;

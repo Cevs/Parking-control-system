@@ -6,6 +6,7 @@
 package org.foi.nwtis.alemartin.utils;
 
 import static com.oracle.jrockit.jfr.ContentType.Address;
+import java.util.Date;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -53,6 +54,7 @@ public class Email {
             MimeMessage poruka = new MimeMessage(session);
             Address adresaPosiljatelja = new InternetAddress(posiljatelj);
             poruka.setFrom(adresaPosiljatelja);
+            poruka.setSentDate(new Date());
 
             Address adresaPrimatelja = new InternetAddress(primatelj);
             poruka.setRecipient(Message.RecipientType.TO, adresaPrimatelja);

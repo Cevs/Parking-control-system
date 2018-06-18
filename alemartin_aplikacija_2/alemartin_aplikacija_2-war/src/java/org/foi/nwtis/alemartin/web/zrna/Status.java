@@ -163,4 +163,8 @@ public class Status implements Serializable {
     public String home() {
         return "home";
     }
+    
+    public String inbox(){
+        return "inbox";
+    }
 }

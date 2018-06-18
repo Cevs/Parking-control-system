@@ -31,6 +31,9 @@ and open the template in the editor.
                         <li class="nav-item">
                             <h:commandLink class="nav-item nav-link" value="Status" action="#{profile.status()}"/>
                         </li>   
+                        <li class="nav-item">
+                            <h:commandLink class="nav-item nav-link" value="Inbox" action="#{profile.inbox()}"/>
+                        </li>  
                     </ul>
                     <h:outputText value="Login as: #{username}" style="font-size:18px; color: white; padding-right: 10px"/>                   
                     <h:commandButton class="btn btn-outline-info my-2 my-sm-0" value="Logout" action="#{login.logout()}"/>
@@ -46,7 +49,7 @@ and open the template in the editor.
                                 <h:inputText id="userId" value="#{profile.userId}" readonly="true"></h:inputText>
                             </td>
                         </tr>
-                         <tr>
+                        <tr>
                             <td>Username:</td>
                             <td>
                                 <h:inputText id="username" value="#{profile.username}" readonly="true"></h:inputText>
@@ -73,7 +76,7 @@ and open the template in the editor.
                             <td align="center"><h:messages globalOnly="true" id="messages" errorClass="err" warnClass="warn" infoClass="info" layout="table"/></td>
                         </tr>
                     </table>
-                  
+
                     <br></br><br></br>
                     <div>
                         <h:dataTable id="users" value="#{profile.usersToShow}" var = "u" 

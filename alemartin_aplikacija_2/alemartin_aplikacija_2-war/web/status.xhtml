@@ -31,6 +31,9 @@ and open the template in the editor.
                         <li class="nav-item active">
                             <h:commandLink class="nav-item nav-link" value="Status" action="#" />
                         </li>  
+                        <li class="nav-item">
+                            <h:commandLink class="nav-item nav-link" value="Inbox" action="#{status.inbox()}" />
+                        </li>  
                     </ul>
                     <h:outputText value="Login as: #{username}" style="font-size:18px; color: white; padding-right: 10px"/>                   
                     <h:commandButton class="btn btn-outline-info my-2 my-sm-0" value="Logout" action="#{login.logout()}"/>

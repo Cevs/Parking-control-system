@@ -42,6 +42,12 @@
             <to-view-id>/status.xhtml</to-view-id>
             <redirect/>
         </navigation-case>
+        <navigation-case>
+            <from-action>#{index.inbox()}</from-action>
+            <from-outcome>inbox</from-outcome>
+            <to-view-id>/inbox.xhtml</to-view-id>
+            <redirect/>
+        </navigation-case>
     </navigation-rule>
     
     <navigation-rule>
@@ -58,6 +64,12 @@
             <to-view-id>/index.xhtml</to-view-id>
             <redirect/>
         </navigation-case>
+        <navigation-case>
+            <from-action>#{status.inbox()}</from-action>
+            <from-outcome>inbox</from-outcome>
+            <to-view-id>/inbox.xhtml</to-view-id>
+            <redirect/>
+        </navigation-case>
     </navigation-rule>
     
     <navigation-rule>
@@ -70,6 +82,34 @@
         </navigation-case>
         <navigation-case>
             <from-action>#{profile.status()}</from-action>
+            <from-outcome>status</from-outcome>
+            <to-view-id>/status.xhtml</to-view-id>
+            <redirect/>
+        </navigation-case>
+        <navigation-case>
+            <from-action>#{profile.inbox()}</from-action>
+            <from-outcome>inbox</from-outcome>
+            <to-view-id>/inbox.xhtml</to-view-id>
+            <redirect/>
+        </navigation-case>
+    </navigation-rule>
+    
+    <navigation-rule>
+        <from-view-id>/inbox.xhtml</from-view-id>
+        <navigation-case>
+            <from-action>#{inbox.home()}</from-action>
+            <from-outcome>home</from-outcome>
+            <to-view-id>/inbox.xhtml</to-view-id>
+            <redirect/>
+        </navigation-case>
+        <navigation-case>
+            <from-action>#{inbox.profile()}</from-action>
+            <from-outcome>profile</from-outcome>
+            <to-view-id>/profile.xhtml</to-view-id>
+            <redirect/>
+        </navigation-case>
+        <navigation-case>
+            <from-action>#{inbox.status()}</from-action>
             <from-outcome>status</from-outcome>
             <to-view-id>/status.xhtml</to-view-id>
             <redirect/>

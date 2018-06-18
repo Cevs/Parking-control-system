@@ -250,11 +250,16 @@ public class Profile implements Serializable {
         this.showButtonPrevious = showButtonPrevious;
     }
 
+    /* Navigation */
     public String home() {
         return "home";
     }
     
     public String status(){
         return "status";
+    }
+    
+    public String inbox(){
+        return "inbox";
     }
 }
