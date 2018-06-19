@@ -167,4 +167,8 @@ public class Status implements Serializable {
     public String inbox(){
         return "inbox";
     }
+    
+    public String log(){
+        return "log";
+    }
 }

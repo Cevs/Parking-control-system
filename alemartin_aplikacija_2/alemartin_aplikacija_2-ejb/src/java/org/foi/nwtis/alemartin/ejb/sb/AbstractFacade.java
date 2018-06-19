@@ -7,6 +7,7 @@ package org.foi.nwtis.alemartin.ejb.sb;
 
 import java.util.List;
 import javax.persistence.EntityManager;
+import javax.validation.ConstraintViolationException;
 
 /**
  *
@@ -23,7 +24,12 @@ public abstract class AbstractFacade<T> {
     protected abstract EntityManager getEntityManager();
 
     public void create(T entity) {
-        getEntityManager().persist(entity);
+        try {
+            getEntityManager().persist(entity);
+        } catch (ConstraintViolationException e) {
+            System.out.println("OVDJE!!! : "+e.getConstraintViolations());
+        }
+
     }
 
     public void edit(T entity) {
@@ -60,5 +66,5 @@ public abstract class AbstractFacade<T> {
         javax.persistence.Query q = getEntityManager().createQuery(cq);
         return ((Long) q.getSingleResult()).intValue();
     }
-    
+
 }

@@ -262,4 +262,8 @@ public class Profile implements Serializable {
     public String inbox(){
         return "inbox";
     }
+    
+    public String log(){
+        return "log";
+    }
 }

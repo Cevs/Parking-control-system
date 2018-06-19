@@ -37,4 +37,8 @@ public class Index implements Serializable {
         return "inbox";
     }
     
+    public String log(){
+        return "log";
+    }
+    
 }

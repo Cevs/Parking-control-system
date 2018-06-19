@@ -5,6 +5,10 @@
         <param-value>NWTiS.app.config.xml</param-value>
     </context-param>
     <context-param>
+        <param-name>javax.faces.DATETIMECONVERTER_DEFAULT_TIMEZONE_IS_SYSTEM_TIMEZONE</param-name>
+        <param-value>true</param-value>
+    </context-param>
+    <context-param>
         <param-name>konfiguracija_baze</param-name>
         <param-value>NWTiS.db.config.xml</param-value>
     </context-param>

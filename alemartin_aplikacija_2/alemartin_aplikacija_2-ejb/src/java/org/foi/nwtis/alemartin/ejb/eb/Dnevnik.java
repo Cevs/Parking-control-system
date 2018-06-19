@@ -50,27 +50,27 @@ public class Dnevnik implements Serializable {
     private Integer id;
     @Basic(optional = false)
     @NotNull
-    @Size(min = 1, max = 25)
+    @Size(min = 0, max = 25)
     @Column(name = "KORISNIK")
     private String korisnik;
     @Basic(optional = false)
     @NotNull
-    @Size(min = 1, max = 255)
+    @Size(min = 0, max = 255)
     @Column(name = "URL")
     private String url;
     @Basic(optional = false)
     @NotNull
-    @Size(min = 1, max = 25)
+    @Size(min = 0, max = 25)
     @Column(name = "IPADRESA")
     private String ipadresa;
     @Basic(optional = false)
     @NotNull
-    @Size(min = 1, max = 50)
+    @Size(min = 0, max = 50)
     @Column(name = "VRSTA_ZAHTJEVA")
     private String vrstaZahtjeva;
     @Basic(optional = false)
     @NotNull
-    @Size(min = 1, max = 255)
+    @Size(min = 0, max = 255)
     @Column(name = "SADRZAJ_ZAHTJEVA")
     private String sadrzajZahtjeva;
     @Column(name = "VRIJEME")
@@ -92,7 +92,7 @@ public class Dnevnik implements Serializable {
         this.id = id;
     }
 
-    public Dnevnik(Integer id, String korisnik, String url, String ipadresa, String vrstaZahtjeva, String sadrzajZahtjeva, int trajanje, int status) {
+    public Dnevnik(Integer id, String korisnik, String url, String ipadresa, String vrstaZahtjeva, String sadrzajZahtjeva, Date vrijeme, int trajanje, int status) {
         this.id = id;
         this.korisnik = korisnik;
         this.url = url;
@@ -100,6 +100,7 @@ public class Dnevnik implements Serializable {
         this.vrstaZahtjeva = vrstaZahtjeva;
         this.sadrzajZahtjeva = sadrzajZahtjeva;
         this.trajanje = trajanje;
+        this.vrijeme = vrijeme;
         this.status = status;
     }
 

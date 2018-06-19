@@ -261,4 +261,8 @@ public class Inbox implements Serializable {
     public String status() {
         return "status";
     }
+    
+    public String log(){
+        return "log";
+    }
 }
