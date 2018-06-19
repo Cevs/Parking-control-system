@@ -14,5 +14,5 @@ CREATE TABLE meteo (
   vjetar float NOT NULL DEFAULT -999,
   vjetarSmjer float NOT NULL DEFAULT -999,
   preuzeto timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  CONSTRAINT meteo_FK1 FOREIGN KEY (id) REFERENCES parkiralista(id) 
+  CONSTRAINT meteo_FK2 FOREIGN KEY (id) REFERENCES parkiralista(id) 
 );

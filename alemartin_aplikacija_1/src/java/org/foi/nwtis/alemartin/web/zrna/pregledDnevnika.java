@@ -125,15 +125,15 @@ public class pregledDnevnika {
 
     private Dnevnik kreirajObjekt(ResultSet rs) throws SQLException {
         int id = rs.getInt("id");
-        int idKorisnik = rs.getInt("korisnik");
+        String korisnik  = rs.getString("korisnik");
         String url = rs.getString("url");
         String ip = rs.getString("ipadresa");
         String vrstaZahtjeva = rs.getString("vrsta_zahtjeva");
         String sadrzajZahtjeva = rs.getString("sadrzaj_zahtjeva");
         Date vrijeme = rs.getTimestamp("vrijeme");
         long trajanje = rs.getLong("trajanje");
-        int status = rs.getInt("status");
-        Dnevnik dnevnik = new Dnevnik(id, idKorisnik, url, ip, vrstaZahtjeva, sadrzajZahtjeva, vrijeme, trajanje, status);
+        String status = rs.getString("status");
+        Dnevnik dnevnik = new Dnevnik(id, korisnik, url, ip, vrstaZahtjeva, sadrzajZahtjeva, vrijeme, trajanje, status);
         return dnevnik;
     }
 

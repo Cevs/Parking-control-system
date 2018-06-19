@@ -6,6 +6,8 @@
             <name>alemartin_aplikacija_2-ejb</name>
             <minimum-ant-version>1.6.5</minimum-ant-version>
             <included-library dirs="200">file.reference.vjezba_03_2.jar</included-library>
+            <included-library dirs="200">libs.jpa20-persistence.classpath</included-library>
+            <included-library dirs="200">libs.jpa2-persistence.classpath</included-library>
             <included-library dirs="200">libs.restlib.classpath</included-library>
             <source-roots>
                 <root id="src.dir"/>

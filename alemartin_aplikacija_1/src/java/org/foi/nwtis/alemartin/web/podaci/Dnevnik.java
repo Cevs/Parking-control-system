@@ -13,18 +13,18 @@ import java.util.Date;
  */
 public class Dnevnik {
     private int id;
-    private int idKorisnik;
+    private String korisnik;
     private String url;
     private String ip;
     private String vrstaZahtjeva;
     private String sadrzajZahtjeva;
     private Date vrijeme;
     private long trajanje;
-    private int status;
+    private String status;
 
-    public Dnevnik(int id, int idKorisnik, String url, String ip, String vrstaZahtjeva, String sadrzajZahtjeva, Date vrijeme, long trajanje, int status) {
+    public Dnevnik(int id, String korisnik, String url, String ip, String vrstaZahtjeva, String sadrzajZahtjeva, Date vrijeme, long trajanje, String status) {
         this.id = id;
-        this.idKorisnik = idKorisnik;
+        this.korisnik = korisnik;
         this.url = url;
         this.ip = ip;
         this.vrstaZahtjeva = vrstaZahtjeva;
@@ -38,10 +38,10 @@ public class Dnevnik {
         return id;
     }
 
-    public int getIdKorisnik() {
-        return idKorisnik;
+    public String getKorisnik() {
+        return korisnik;
     }
-
+  
     public String getUrl() {
         return url;
     }
@@ -66,7 +66,7 @@ public class Dnevnik {
         return trajanje;
     }
 
-    public int getStatus() {
+    public String getStatus() {
         return status;
     }
     

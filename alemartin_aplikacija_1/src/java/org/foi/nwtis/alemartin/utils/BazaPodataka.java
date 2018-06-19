@@ -127,18 +127,19 @@ public class BazaPodataka {
         }
     }
 
-    public static boolean autentificirajKorisnika(String korisnickoIme, String lozinka) {
-        String sql = "SELECT *FROM korisnici WHERE korisnicko_ime = ? AND lozinka = ?";
+    public static int autentificirajKorisnika(String korisnickoIme, String lozinka) {
+        String sql = "SELECT id FROM korisnici WHERE korisnicko_ime = ? AND lozinka = ?";
         try (Connection conn = getConnection();
                 PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, korisnickoIme);
             ps.setString(2, lozinka);
             ResultSet rs = ps.executeQuery();
-            return rs.next();
+            rs.next();
+            return rs.getInt("id");
         } catch (SQLException ex) {
             Logger.getLogger(BazaPodataka.class.getName()).log(Level.SEVERE, null, ex);
         }
-        return false;
+        return -1;
     }
 
     public String getUrl() {

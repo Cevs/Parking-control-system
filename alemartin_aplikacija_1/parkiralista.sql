@@ -5,5 +5,6 @@ CREATE TABLE parkiralista (
   latitude float(6) NOT NULL DEFAULT 0.0,
   longitude float(6) NOT NULL DEFAULT 0.0,
   ukupno_mjesta int NOT NULL DEFAULT 0,
-  zauzeta_mjesta int NOT NULL DEFAULT 0
+  zauzeta_mjesta int NOT NULL DEFAULT 0,
+  idKorisnik int UNSIGNED  NOT NULL
 );

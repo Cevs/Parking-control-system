@@ -88,12 +88,13 @@ public class Application1REST {
             String userAuth = getUserAuthentication(auth);
             String username = userAuth.split(":")[0];
             String password = userAuth.split(":")[1];
-            if (!BazaPodataka.autentificirajKorisnika(username, password)) {
+            int idUser = BazaPodataka.autentificirajKorisnika(username, password);
+            if (idUser == -1) {
                 saveToLog(username, url, ip, requestType, requestContent, "Neuspjela autorizacija", start);
                 return kreirajJSONParkiraliste(new ArrayList<>(), true, "Neuspjela autorizacija");
             }
             ArrayList<Parkiraliste> parkiralista = new ArrayList<>();
-            String sql = "SELECT *FROM parkiralista";
+            String sql = "SELECT *FROM parkiralista WHERE idKorisnik = "+idUser;
             try (Connection conn = BazaPodataka.getConnection();
                     Statement stmt = conn.createStatement();
                     ResultSet rs = stmt.executeQuery(sql)) {
@@ -135,16 +136,18 @@ public class Application1REST {
             String userAuth = getUserAuthentication(auth);
             String username = userAuth.split(":")[0];
             String password = userAuth.split(":")[1];
-            if (!BazaPodataka.autentificirajKorisnika(username, password)) {
+            int idUser = BazaPodataka.autentificirajKorisnika(username, password);
+            if (idUser == -1) {
                 saveToLog(username, url, ip, requestType, requestContent, "Neuspjela autorizacija", start);
                 return kreirajJSONParkiraliste(new ArrayList<>(), true, "Neuspjela autorizacija");
 
             }
             ArrayList<Parkiraliste> parkiralista = new ArrayList<>();
-            String sql = "SELECT *FROM parkiralista WHERE id = ?";
+            String sql = "SELECT *FROM parkiralista WHERE id = ? AND idKorisnik = ?";
             try (Connection conn = BazaPodataka.getConnection();
                     PreparedStatement ps = conn.prepareStatement(sql)) {
                 ps.setInt(1, id);
+                ps.setInt(2, idUser);
                 ResultSet rs = ps.executeQuery();
                 if (rs.next()) {
                     String naziv = rs.getString("naziv");
@@ -154,8 +157,8 @@ public class Application1REST {
                     Parkiraliste parkiraliste = new Parkiraliste(id, naziv, adresa, new Lokacija(latitude, longitude));
                     parkiralista.add(parkiraliste);
                 } else {
-                    saveToLog(username, url, ip, requestType, requestContent, "Nepostoji parkiralsite s id: " + id, start);
-                    return kreirajJSONParkiraliste(new ArrayList<>(), true, "Nepostoji parkiralsite s id: " + id);
+                    saveToLog(username, url, ip, requestType, requestContent, "Parkiraliste ne postoji ili ne pripada korisniku", start);
+                    return kreirajJSONParkiraliste(new ArrayList<>(), true, "Parkiraliste ne postoji ili ne pripada korisniku");
                 }
             } catch (SQLException ex) {
                 Logger.getLogger(Application1REST.class.getName()).log(Level.SEVERE, null, ex);
@@ -187,7 +190,8 @@ public class Application1REST {
             String userAuth = getUserAuthentication(auth);
             String username = userAuth.split(":")[0];
             String password = userAuth.split(":")[1];
-            if (!BazaPodataka.autentificirajKorisnika(username, password)) {
+            int idUser = BazaPodataka.autentificirajKorisnika(username, password);
+            if (idUser == -1) {
                 saveToLog(username, url, ip, requestType, requestContent, "Neuspjela autentifikacija", start);
                 return kreirajJSONParkiraliste(new ArrayList<Parkiraliste>(), true, "Neuspjela autentifikacija");
             }
@@ -217,13 +221,13 @@ public class Application1REST {
             }
             int id = -1;
             try {
-                id = dodajParkiraliste(naziv, adresa, ukupno, zauzeto);
+                id = dodajParkiraliste(naziv, adresa, ukupno, zauzeto, idUser);
                 ParkiranjeWSKlijenti.dodajNovoParkiralisteGrupi(nwtisKorIme, nwtisLozinka, id, naziv, adresa, ukupno);
             } catch (Exception ex) {
                 //Sinkronizacija parkiralista s bazom podataka, u slucaju da ParkiranjeWS rezultira greškom
                 if (id != -1) {
                     try {
-                        obrisiParkiraliste(id);
+                        obrisiParkiraliste(id, idUser);
                     } catch (Exception ex2) {
                     }
                 }
@@ -252,7 +256,8 @@ public class Application1REST {
             String userAuth = getUserAuthentication(auth);
             String username = userAuth.split(":")[0];
             String password = userAuth.split(":")[1];
-            if (!BazaPodataka.autentificirajKorisnika(username, password)) {
+            int idUser = BazaPodataka.autentificirajKorisnika(username, password);
+            if (idUser == -1) {
                 saveToLog(username, url, ip, requestType, requestContent, "Neuspjela autentifikacija", start);
                 return kreirajJSONParkiraliste(new ArrayList<>(), true, "Neuspjela autentifikacija");
             }
@@ -282,7 +287,8 @@ public class Application1REST {
             String userAuth = getUserAuthentication(auth);
             String username = userAuth.split(":")[0];
             String password = userAuth.split(":")[1];
-            if (!BazaPodataka.autentificirajKorisnika(username, password)) {
+            int idUser = BazaPodataka.autentificirajKorisnika(username, password);
+            if (idUser  == -1) {
                 saveToLog(username, url, ip, requestType, requestContent, "Neuspjela autentifikacija", start);
                 return kreirajJSONParkiraliste(new ArrayList<Parkiraliste>(), true, "Neuspjela autentifikacija");
             }
@@ -306,7 +312,7 @@ public class Application1REST {
                 String json = kreirajJSONParkiraliste(new ArrayList<>(), true, "Nedostaje naziv i/ili adresa parkirališta");
             }
 
-            if (!parkiralistePostoji(id)) {
+            if (!parkiralistePostoji(id, idUser)) {
                 saveToLog(username, url, ip, requestType, requestContent, "Parkiraliste ne postoji", start);
                 return kreirajJSONParkiraliste(new ArrayList<>(), true, "Parkiraliste ne postoji");
             }
@@ -341,7 +347,8 @@ public class Application1REST {
             String userAuth = getUserAuthentication(auth);
             String username = userAuth.split(":")[0];
             String password = userAuth.split(":")[1];
-            if (!BazaPodataka.autentificirajKorisnika(username, password)) {
+            int idUser = BazaPodataka.autentificirajKorisnika(username, password);
+            if (idUser == -1) {
                 saveToLog(username, url, ip, requestType, requestContent, "Neuspjela autentifikacija", start);
                 return kreirajJSONParkiraliste(new ArrayList<>(), true, "Neuspjela autentifikacija");
             }
@@ -366,13 +373,18 @@ public class Application1REST {
             String userAuth = getUserAuthentication(auth);
             String username = userAuth.split(":")[0];
             String password = userAuth.split(":")[1];
-            if (!BazaPodataka.autentificirajKorisnika(username, password)) {
+            int idUser = BazaPodataka.autentificirajKorisnika(username, password);
+            if (idUser == -1) {
                 saveToLog(username, url, ip, requestType, requestContent, "Neuspjela autentifikacija", start);
                 return kreirajJSONParkiraliste(new ArrayList<>(), true, "Neuspjela autentifikacija");
             }
             try {
-                obrisiParkiraliste(id);
-                ParkiranjeWSKlijenti.obrisiParkiralisteGrupe(nwtisKorIme, nwtisLozinka, id);
+                if(obrisiParkiraliste(id, idUser) != 0){
+                    ParkiranjeWSKlijenti.obrisiParkiralisteGrupe(nwtisKorIme, nwtisLozinka, id);
+                }else{
+                     saveToLog(username, url, ip, requestType, requestContent, "Neuspjelo brisanje parkirališta", start);
+                     return kreirajJSONParkiraliste(new ArrayList<>(), true, "Neuspjelo brisanje parkirališta");
+                }               
             } catch (Exception ex) {
                 saveToLog(username, url, ip, requestType, requestContent, "Neuspjelo brisanje parkirališta", start);
                 return kreirajJSONParkiraliste(new ArrayList<>(), true, "Neuspjelo brisanje parkirališta" + ex.getMessage());
@@ -397,7 +409,8 @@ public class Application1REST {
             String userAuth = getUserAuthentication(auth);
             String username = userAuth.split(":")[0];
             String password = userAuth.split(":")[1];
-            if (!BazaPodataka.autentificirajKorisnika(username, password)) {
+            int idUser = BazaPodataka.autentificirajKorisnika(username, password);
+            if (idUser == -1) {
                 saveToLog(username, url, ip, requestType, requestContent, "Neuspjela autentifikacija", start);
                 return kreirajJSONParkiraliste(new ArrayList<>(), true, "Neuspjela autentifikacija");
             }
@@ -423,12 +436,13 @@ public class Application1REST {
             String userAuth = getUserAuthentication(auth);
             String username = userAuth.split(":")[0];
             String password = userAuth.split(":")[1];
-            if (!BazaPodataka.autentificirajKorisnika(username, password)) {
+            int idUser = BazaPodataka.autentificirajKorisnika(username, password);
+            if (idUser == -1) {
                 saveToLog(username, url, ip, requestType, requestContent, "Neuspjela autentifikacija", start);
                 return kreirajJSONParkiraliste(new ArrayList<>(), true, "Neuspjela autentifikacija");
             }
 
-            if (!parkiralistePostoji(id)) {
+            if (!parkiralistePostoji(id, idUser)) {
                 saveToLog(username, url, ip, requestType, requestContent, "Parkiraliste ne postoji", start);
                 return kreirajJSONVozila(new ArrayList<>(), true, "Parkiraliste ne postoji");
             }
@@ -446,7 +460,7 @@ public class Application1REST {
         }
     }
 
-    private int dodajParkiraliste(String naziv, String adresa, int ukupno, int zauzeto) throws Exception {
+    private int dodajParkiraliste(String naziv, String adresa, int ukupno, int zauzeto, int idUser) throws Exception {
         float latitude;
         float longitude;
         try {
@@ -459,7 +473,7 @@ public class Application1REST {
         }
 
         String sql = "INSERT INTO parkiralista (id, naziv, adresa, latitude, longitude, "
-                + "ukupno_mjesta, zauzeta_mjesta) VALUES  (DEFAULT, ?,?,?,?,?,?);";
+                + "ukupno_mjesta, zauzeta_mjesta, korisnik_id) VALUES  (DEFAULT, ?,?,?,?,?,?,?);";
         try (Connection conn = BazaPodataka.getConnection();
                 PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             ps.setString(1, naziv);
@@ -468,6 +482,7 @@ public class Application1REST {
             ps.setFloat(4, longitude);
             ps.setInt(5, ukupno);
             ps.setInt(6, zauzeto);
+            ps.setInt(7, idUser);
             ps.executeUpdate();
             ResultSet rs = ps.getGeneratedKeys();
             rs.next();
@@ -521,11 +536,12 @@ public class Application1REST {
         return false;
     }
 
-    private boolean parkiralistePostoji(int id) {
-        String sql = "SELECT *FROM parkiralista WHERE id =  ?";
+    private boolean parkiralistePostoji(int id, int idUser) {
+        String sql = "SELECT *FROM parkiralista WHERE id =  ? AND idKorisnik = ?";
         try (Connection conn = BazaPodataka.getConnection();
                 PreparedStatement ps = conn.prepareStatement(sql);) {
             ps.setInt(1, id);
+            ps.setInt(2,idUser);
             ResultSet rs = ps.executeQuery();
             return rs.next();
         } catch (SQLException ex) {
@@ -534,12 +550,13 @@ public class Application1REST {
         return false;
     }
 
-    private void obrisiParkiraliste(int id) throws Exception {
-        String sql = "DELETE FROM parkiralista WHERE id = ?";
+    private int obrisiParkiraliste(int id, int idUser) throws Exception {
+        String sql = "DELETE FROM parkiralista WHERE id = ? AND idKorisnik = ?";
         try (Connection conn = BazaPodataka.getConnection();
                 PreparedStatement ps = conn.prepareCall(sql)) {
             ps.setInt(1, id);
-            ps.executeUpdate();
+            ps.setInt(2, idUser);
+            return ps.executeUpdate();
         } catch (SQLException ex) {
             throw new Exception("Nuspjelo brisanje parkirališta");
         }

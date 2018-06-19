@@ -46,7 +46,7 @@ public class GeoMeteoWS {
     public MeteoPodaci dajZadnjePreuzeteMeteoPodatke(@WebParam(name = "korisnickoIme") String korisnickoIme,
             @WebParam(name = "lozinka") String lozinka, @WebParam(name = "parkiralisteId") int idParkiraliste) {
 
-        if (!BazaPodataka.autentificirajKorisnika(korisnickoIme, lozinka)) {
+        if (BazaPodataka.autentificirajKorisnika(korisnickoIme, lozinka) ==-1) {
             return null;
         }
 
@@ -77,7 +77,7 @@ public class GeoMeteoWS {
             @WebParam(name = "lozinka") String lozinka, @WebParam(name = "parkiralisteId") int idParkiraliste,
             @WebParam(name = "brojZapisa") int brojZapisa) {
 
-        if (!BazaPodataka.autentificirajKorisnika(korisnickoIme, lozinka)) {
+        if (BazaPodataka.autentificirajKorisnika(korisnickoIme, lozinka) == -1) {
             return null;
         }
         List<MeteoPodaci> mpList = new ArrayList<>();
@@ -109,7 +109,7 @@ public class GeoMeteoWS {
             @WebParam(name = "lozinka") String lozinka, @WebParam(name = "idParkiraliste") int idParkiraliste,
             @WebParam(name = "datumOd") long datumOd, @WebParam(name = "datumDo") long datumDo) {
 
-        if (!BazaPodataka.autentificirajKorisnika(korisnickoIme, lozinka)) {
+        if (BazaPodataka.autentificirajKorisnika(korisnickoIme, lozinka) == -1) {
             return null;
         }
 
@@ -147,7 +147,7 @@ public class GeoMeteoWS {
     public MeteoPodaci dajVazeceMeteoPodatke(@WebParam(name = "korisnickoIme") String korisnickoIme,
             @WebParam(name = "lozinka") String lozinka, @WebParam(name = "idParkiraliste") int idParkiraliste) {
 
-        if (!BazaPodataka.autentificirajKorisnika(korisnickoIme, lozinka)) {
+        if (BazaPodataka.autentificirajKorisnika(korisnickoIme, lozinka) == -1) {
             return null;
         }
 

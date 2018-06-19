@@ -116,7 +116,7 @@ public class KlijentSocket implements Runnable {
             return (String) metoda.invoke(this, (String) podKomanda);
         }
 
-        if (!BazaPodataka.autentificirajKorisnika(korisnickoIme, lozinka)) {
+        if (BazaPodataka.autentificirajKorisnika(korisnickoIme, lozinka) == -1) {
             return "ERR 11;";    //Neuspjela autentifikacija
         }
 
