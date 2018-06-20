@@ -28,7 +28,7 @@ and open the template in the editor.
                     </div>
                 </div>
             </nav>
-            <div class="container">
+            <div class="container" style="margin-top:40px; max-width: 1250px !important;">
                 <h1 class="text-center">
                     Dnevnik
                 </h1>
@@ -48,17 +48,17 @@ and open the template in the editor.
                         <td></td>
                         <td></td>
                         <td>
-                            <h:commandButton class="w-100" value="Postavi filter" action="#{pregledDnevnika.postaviFiltere()}">
+                            <h:commandButton class="btn btn-dark w-100" value="Postavi filter" action="#{pregledDnevnika.postaviFiltere()}">
                                 <f:ajax  execute="vrijemeOd vrijemeDo vrstaZapisa" render="dnevnik sljedeci prethodni "/>
                             </h:commandButton>
                         </td>
                     </tr>
                 </table>
-
+                <br></br>
                 <h:dataTable id="dnevnik" value="#{pregledDnevnika.listaDnevnika}" var = "d" 
                              style ="word-wrap:break-word;"
-                             class="table table-hover">
-                    <h:column>
+                             class="table table-hover text-center">
+                    <h:column >
                         <f:facet name="header"><h:outputText value="Id"/></f:facet>
                         <h:outputText value="#{d.id}"/>     
                     </h:column>
@@ -98,17 +98,20 @@ and open the template in the editor.
                     </h:column>
                 </h:dataTable>
 
-                <h:commandButton id ="prethodni" class="btn btn-outline-dark" value="Prethodni" 
-                                 disabled="#{!pregledDnevnika.prikaziGumbPrethodni}"
-                                 action="#{pregledDnevnika.prethodnaStranica()}">
-                    <f:ajax render = "dnevnik sljedeci prethodni"/>
-                </h:commandButton>
+                <div class="w-50 mx-auto" style="margin-bottom:20px;">
+                    <h:commandButton id ="prethodni" class="btn btn-outline-dark w-50 mx-auto" value="Prethodni" 
+                                     disabled="#{!pregledDnevnika.prikaziGumbPrethodni}"
+                                     action="#{pregledDnevnika.prethodnaStranica()}">
+                        <f:ajax render = "dnevnik sljedeci prethodni"/>
+                    </h:commandButton>
 
-                <h:commandButton id="sljedeci" class="btn btn-outline-dark"  value="Sljedeći" 
-                                 disabled="#{!pregledDnevnika.prikaziGumbSljedeci}"
-                                 action="#{pregledDnevnika.sljedecaStranica()}">
-                    <f:ajax render = "dnevnik sljedeci prethodni"/>
-                </h:commandButton>
+                    <h:commandButton id="sljedeci" class="btn btn-outline-dark w-50 mx-auto"  value="Sljedeći" 
+                                     disabled="#{!pregledDnevnika.prikaziGumbSljedeci}"
+                                     action="#{pregledDnevnika.sljedecaStranica()}">
+                        <f:ajax render = "dnevnik sljedeci prethodni"/>
+                    </h:commandButton>
+                </div>
+
             </div>
         </h:form>
         <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>

@@ -46,13 +46,13 @@ and open the template in the editor.
                             </li>  
                         </ul>
                         <h:outputText value="#{p['navigacija.labela_prijavlje_kao']}: #{username}" style="font-size:18px; color: white; padding-right: 10px"/>                   
-                        <h:commandButton class="btn btn-outline-info my-2 my-sm-0" value="#{p['navigacija.veza_odjava']}" action="#{login.logout()}"/>
+                        <h:commandButton class="btn btn-outline-danger my-2 my-sm-0" value="#{p['navigacija.veza_odjava']}" action="#{login.logout()}"/>
                         <ul class="navbar-nav md-auto" >
-                            <li class="nav-item">
-                                <h:commandLink class="nav-item nav-link" value="en" action="#{localization.selectLanguage('en')}" rendered="#{localization.selectedLanguage ne 'en'}" />
+                            <li class="#{localization.selectedLanguage ne 'hr' ? 'nav-item active' : 'nav-item'}">
+                                <h:commandLink class="nav-item nav-link" value="en" action="#{localization.selectLanguage('en')}" disabled="#{localization.selectedLanguage ne 'hr'}" />
                             </li>   
-                            <li class="nav-item">
-                                <h:commandLink class="nav-item nav-link" value="hr" action="#{localization.selectLanguage('hr')}" rendered="#{localization.selectedLanguage ne 'hr'}" />
+                            <li class="#{localization.selectedLanguage ne 'en' ? 'nav-item active' : 'nav-item'}">
+                                <h:commandLink class="nav-item nav-link" value="hr" action="#{localization.selectLanguage('hr')}" disabled="#{localization.selectedLanguage ne 'en'}" />
                             </li>
                         </ul>
                     </div>

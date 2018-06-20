@@ -23,11 +23,11 @@ and open the template in the editor.
                     <div class="collapse navbar-collapse">
                         <a class="navbar-brand" href="#"><h:outputText value="#{p['navigacija.naslov_aplikacije']}"/></a>
                         <ul class="navbar-nav ml-md-auto" >
-                            <li class="nav-item">
-                                <h:commandLink class="nav-item nav-link" value="en" action="#{localization.selectLanguage('en')}" rendered="#{localization.selectedLanguage ne 'en'}" />
+                            <li class="#{localization.selectedLanguage ne 'hr' ? 'nav-item active' : 'nav-item'}">
+                                <h:commandLink class="nav-item nav-link" value="en" action="#{localization.selectLanguage('en')}" disabled="#{localization.selectedLanguage ne 'hr'}" />
                             </li>   
-                            <li class="nav-item">
-                                <h:commandLink class="nav-item nav-link" value="hr" action="#{localization.selectLanguage('hr')}" rendered="#{localization.selectedLanguage ne 'hr'}" />
+                            <li class="#{localization.selectedLanguage ne 'en' ? 'nav-item active' : 'nav-item'}">
+                                <h:commandLink class="nav-item nav-link" value="hr" action="#{localization.selectLanguage('hr')}" disabled="#{localization.selectedLanguage ne 'en'}" />
                             </li>
                         </ul>
                     </div>
