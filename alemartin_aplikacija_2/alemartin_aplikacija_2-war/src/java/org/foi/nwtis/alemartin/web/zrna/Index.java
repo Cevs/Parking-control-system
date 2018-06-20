@@ -8,6 +8,11 @@ package org.foi.nwtis.alemartin.web.zrna;
 import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
+import java.util.Locale;
+import javax.annotation.PostConstruct;
+import javax.faces.component.UIViewRoot;
+import javax.faces.context.FacesContext;
+import org.foi.nwtis.alemartin.slusaci.SlusacAplikacije;
 
 /**
  *
@@ -17,12 +22,12 @@ import java.io.Serializable;
 @SessionScoped
 public class Index implements Serializable {
 
-    /**
-     * Creates a new instance of Index
-     */
+    private String selectedLanguage;
+    private Locale locale;
+   
     public Index() {
     }
-    
+      
     /* Navigation */
     
     public String profile(){
