@@ -171,4 +171,8 @@ public class Status implements Serializable {
     public String log(){
         return "log";
     }
+    
+    public String parkings(){
+        return "parkings";
+    }
 }

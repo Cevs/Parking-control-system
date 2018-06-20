@@ -265,4 +265,8 @@ public class Inbox implements Serializable {
     public String log(){
         return "log";
     }
+    
+    public String parkings(){
+        return "parkings";
+    }
 }

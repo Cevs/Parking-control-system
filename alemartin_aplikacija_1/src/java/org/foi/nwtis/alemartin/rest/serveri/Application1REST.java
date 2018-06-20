@@ -42,6 +42,7 @@ import org.foi.nwtis.alemartin.utils.BazaPodataka;
 import org.foi.nwtis.alemartin.web.podaci.Parkiraliste;
 import org.foi.nwtis.alemartin.web.slusaci.SlusacAplikacije;
 import org.foi.nwtis.alemartin.ws.klijenti.ParkiranjeWSKlijenti;
+import org.foi.nwtis.alemartin.ws.klijenti.StatusParkiralista;
 import org.foi.nwtis.alemartin.ws.klijenti.Vozilo;
 import sun.misc.BASE64Decoder;
 
@@ -94,7 +95,14 @@ public class Application1REST {
                 return kreirajJSONParkiraliste(new ArrayList<>(), true, "Neuspjela autorizacija");
             }
             ArrayList<Parkiraliste> parkiralista = new ArrayList<>();
-            String sql = "SELECT *FROM parkiralista WHERE idKorisnik = "+idUser;
+            List<String> parkiralistaIDs = new ArrayList<>();
+            List<org.foi.nwtis.alemartin.ws.klijenti.Parkiraliste> parkiralistaSOAP =  ParkiranjeWSKlijenti.dajSvaParkiralistaGrupe(nwtisKorIme, nwtisLozinka);
+            for(org.foi.nwtis.alemartin.ws.klijenti.Parkiraliste p: parkiralistaSOAP){
+                parkiralistaIDs.add(String.valueOf(p.getId()));
+            }
+            String ids = String.join(",", parkiralistaIDs);
+            
+            String sql = "SELECT *FROM parkiralista WHERE idKorisnik = " + idUser + " AND id IN ("+ids+");";
             try (Connection conn = BazaPodataka.getConnection();
                     Statement stmt = conn.createStatement();
                     ResultSet rs = stmt.executeQuery(sql)) {
@@ -104,7 +112,11 @@ public class Application1REST {
                     String adresa = rs.getString("adresa");
                     String latitude = rs.getString("latitude");
                     String longitude = rs.getString("longitude");
-                    Parkiraliste parkiraliste = new Parkiraliste(id, naziv, adresa, new Lokacija(latitude, longitude));
+                    int brojParkirnihMjesta = rs.getInt("ukupno_mjesta");
+                    int brojZauzetihMjesta = rs.getInt("zauzeta_mjesta");
+                    int idKorisnika = rs.getInt("idKorisnik");
+                    Parkiraliste parkiraliste = new Parkiraliste(id, naziv, adresa, new Lokacija(latitude, longitude),
+                            brojParkirnihMjesta, brojZauzetihMjesta, idKorisnika);
                     parkiralista.add(parkiraliste);
                 }
             } catch (SQLException ex) {
@@ -112,9 +124,7 @@ public class Application1REST {
                 saveToLog(username, url, ip, requestType, requestContent, "Pogreska kod dohvata parkiralista iz baze", start);
                 return kreirajJSONParkiraliste(new ArrayList<>(), true, "Pogreska kod dohvata parkiralista iz baze");
             }
-            //Za provjeru
-            //Evenutano napravi sinkronizaciju (tako da se se provjere popisi parkiralista)
-            ArrayList<org.foi.nwtis.alemartin.ws.klijenti.Parkiraliste> parkiralista2 = (ArrayList<org.foi.nwtis.alemartin.ws.klijenti.Parkiraliste>) ParkiranjeWSKlijenti.dajSvaParkiralistaGrupe(nwtisKorIme, nwtisLozinka);
+
             saveToLog(username, url, ip, requestType, requestContent, "OK", start);
             return kreirajJSONParkiraliste(parkiralista, false, "");
         } catch (Exception ex) {
@@ -140,7 +150,6 @@ public class Application1REST {
             if (idUser == -1) {
                 saveToLog(username, url, ip, requestType, requestContent, "Neuspjela autorizacija", start);
                 return kreirajJSONParkiraliste(new ArrayList<>(), true, "Neuspjela autorizacija");
-
             }
             ArrayList<Parkiraliste> parkiralista = new ArrayList<>();
             String sql = "SELECT *FROM parkiralista WHERE id = ? AND idKorisnik = ?";
@@ -154,7 +163,11 @@ public class Application1REST {
                     String adresa = rs.getString("adresa");
                     String latitude = rs.getString("latitude");
                     String longitude = rs.getString("longitude");
-                    Parkiraliste parkiraliste = new Parkiraliste(id, naziv, adresa, new Lokacija(latitude, longitude));
+                    int brojParkirnihMjesta = rs.getInt("ukupno_mjesta");
+                    int brojZauzetihMjesta = rs.getInt("zauzeta_mjesta");
+                    int idKorisnika = rs.getInt("idKorisnik");
+                    Parkiraliste parkiraliste = new Parkiraliste(id, naziv, adresa, new Lokacija(latitude, longitude),
+                            brojParkirnihMjesta, brojZauzetihMjesta, idKorisnika);
                     parkiralista.add(parkiraliste);
                 } else {
                     saveToLog(username, url, ip, requestType, requestContent, "Parkiraliste ne postoji ili ne pripada korisniku", start);
@@ -169,6 +182,126 @@ public class Application1REST {
             return kreirajJSONParkiraliste(parkiralista, false, "");
         } catch (Exception ex) {
             saveToLog("UNKNOWN", url, ip, requestType, requestContent, "Pogreška zahtjeva", start);
+            return kreirajJSONParkiraliste(new ArrayList<>(), true, "Pogreška zahtjeva");
+        }
+    }
+
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("{id}/stanje/")
+    public String dajStanjeParkiralista(@Context HttpServletRequest requestContext,
+            @HeaderParam("authorization") String auth, @PathParam("id") int idParkiraliste) {
+        long start = System.currentTimeMillis();
+        String ip = requestContext.getRemoteAddr();
+        String requestContent = String.valueOf(idParkiraliste);
+        String url = requestContext.getRequestURI();
+        String requestType = "REST GET{id}/stanje/";
+        try {
+            String userAuth = getUserAuthentication(auth);
+            String username = userAuth.split(":")[0];
+            String password = userAuth.split(":")[1];
+            int idUser = BazaPodataka.autentificirajKorisnika(username, password);
+            if (idUser == -1) {
+                saveToLog(username, url, ip, requestType, requestContent, "Neuspjela autorizacija", start);
+                return kreirajJSONParkiraliste(new ArrayList<>(), true, "Neuspjela autorizacija");
+            }
+
+            JsonObjectBuilder jsonObjectBuilder = Json.createObjectBuilder();
+            if (parkiralistePostoji(idParkiraliste, idUser)) {
+                StatusParkiralista status = ParkiranjeWSKlijenti.dajStatusParkiralistaGrupe(nwtisKorIme, nwtisLozinka, idParkiraliste);
+                String response = "";
+                switch (status) {
+                    case AKTIVAN:
+                        response = "Aktivan";
+                        break;
+                    case PASIVAN:
+                        response = "Pasivan";
+                        break;
+                    case BLOKIRAN:
+                        response = "Blokiran";
+                        break;
+                    case NEPOSTOJI:
+                        response = "Nepostoji";
+                        break;
+                }
+                jsonObjectBuilder.add("odgovor", response);
+                jsonObjectBuilder.add("status", "OK");
+            } else {
+                jsonObjectBuilder.add("status", "ERR");
+                jsonObjectBuilder.add("poruka", "Parkiralište ne posotji");
+            }
+            saveToLog(username, url, ip, requestType, requestContent, "OK", start);
+            return jsonObjectBuilder.build().toString();
+        } catch (Exception ex) {
+            saveToLog("UNKNOWN", url, ip, requestType, requestContent, "Pogreška zahtjeva", start);
+            return kreirajJSONParkiraliste(new ArrayList<>(), true, "Pogreška zahtjeva");
+        }
+    }
+
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("{id}/aktiviraj/")
+    public String aktivirajParkiraliste(@Context HttpServletRequest requestContext,
+            @HeaderParam("authorization") String auth, @PathParam("id") int idParkiraliste) {
+        long start = System.currentTimeMillis();
+        String ip = requestContext.getRemoteAddr();
+        String requestContent = String.valueOf(idParkiraliste);
+        String url = requestContext.getRequestURI();
+        String requestType = "REST GET{id}/aktiviraj/";
+        try {
+            String userAuth = getUserAuthentication(auth);
+            String username = userAuth.split(":")[0];
+            String password = userAuth.split(":")[1];
+            int idUser = BazaPodataka.autentificirajKorisnika(username, password);
+            if (idUser == -1) {
+                saveToLog(username, url, ip, requestType, requestContent, "Neuspjela autorizacija", start);
+                return kreirajJSONParkiraliste(new ArrayList<>(), true, "Neuspjela autorizacija");
+            }
+
+            if (parkiralistePostoji(idUser, idUser)) {
+                saveToLog(username, url, ip, requestType, requestContent, "OK", start);
+                ParkiranjeWSKlijenti.aktivirajParkiralisteGrupe(nwtisKorIme, nwtisLozinka, idParkiraliste);
+                return kreirajJSONParkiraliste(new ArrayList<>(), false, "");
+            } else {
+                saveToLog(username, url, ip, requestType, requestContent, "Parkiralište ne postoji", start);
+                return kreirajJSONParkiraliste(new ArrayList<>(), true, "Parkiralište ne postoji");
+            }
+        } catch (Exception ex) {
+            saveToLog("UNKNOWN", url, ip, requestType, requestContent, "Pogreška zahtjeva", start);
+            return kreirajJSONParkiraliste(new ArrayList<>(), true, "Pogreška zahtjeva");
+        }
+    }
+
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("{id}/blokiraj")
+    public String blokirajParkiralite(@Context HttpServletRequest requestContext,
+            @HeaderParam("authorization") String auth, @PathParam("id") int idParkiraliste) {
+        long start = System.currentTimeMillis();
+        String ip = requestContext.getRemoteAddr();
+        String requestContent = String.valueOf(idParkiraliste);
+        String url = requestContext.getRequestURI();
+        String requestType = "REST GET{id}/blokiraj/";
+        try {
+            String userAuth = getUserAuthentication(auth);
+            String username = userAuth.split(":")[0];
+            String password = userAuth.split(":")[1];
+            int idUser = BazaPodataka.autentificirajKorisnika(username, password);
+            if (idUser == -1) {
+                saveToLog(username, url, ip, requestType, requestContent, "Neuspjela autorizacija", start);
+                return kreirajJSONParkiraliste(new ArrayList<>(), true, "Neuspjela autorizacija");
+            }
+
+            if (parkiralistePostoji(idParkiraliste, idUser)) {
+                saveToLog(username, url, ip, requestType, requestContent, "OK", start);
+                ParkiranjeWSKlijenti.blokirajParkiralisteGrupe(nwtisKorIme, nwtisLozinka, idParkiraliste);
+                return kreirajJSONParkiraliste(new ArrayList<>(), false, "");
+            } else {
+                saveToLog(username, url, ip, requestType, requestContent, "Parkiralište ne postoji", start);
+                return kreirajJSONParkiraliste(new ArrayList<>(), true, "Parkiralište ne postji");
+            }
+        } catch (Exception ex) {
+            saveToLog("UKNOWN", url, ip, requestType, requestContent, "Pogreška zahtjeva", start);
             return kreirajJSONParkiraliste(new ArrayList<>(), true, "Pogreška zahtjeva");
         }
     }
@@ -201,7 +334,7 @@ public class Application1REST {
                 naziv = jsonObject.getString("naziv").trim();
                 adresa = jsonObject.getString("adresa").trim();
                 ukupno = Integer.parseInt(jsonObject.getString("ukupnoMjesta").trim());
-                zauzeto = Integer.parseInt(jsonObject.getString("zauzetaMjesta").trim());
+                //zauzeto = Integer.parseInt(jsonObject.getString("zauzetaMjesta").trim());
             } catch (NumberFormatException ex) {
                 saveToLog(username, url, ip, requestType, requestContent, "Neispravni tipovi podataka", start);
                 return kreirajJSONParkiraliste(new ArrayList<>(), true, "Neispravni tipovi podataka");
@@ -221,7 +354,7 @@ public class Application1REST {
             }
             int id = -1;
             try {
-                id = dodajParkiraliste(naziv, adresa, ukupno, zauzeto, idUser);
+                id = dodajParkiraliste(naziv, adresa, ukupno, idUser);
                 ParkiranjeWSKlijenti.dodajNovoParkiralisteGrupi(nwtisKorIme, nwtisLozinka, id, naziv, adresa, ukupno);
             } catch (Exception ex) {
                 //Sinkronizacija parkiralista s bazom podataka, u slucaju da ParkiranjeWS rezultira greškom
@@ -277,7 +410,6 @@ public class Application1REST {
         String naziv;
         String adresa;
         int ukupno;
-        int zauzeto;
         String requestContent = sadrzaj;
         String url = requestContext.getRequestURI();
         String requestType = "REST PUT{id}";
@@ -288,7 +420,7 @@ public class Application1REST {
             String username = userAuth.split(":")[0];
             String password = userAuth.split(":")[1];
             int idUser = BazaPodataka.autentificirajKorisnika(username, password);
-            if (idUser  == -1) {
+            if (idUser == -1) {
                 saveToLog(username, url, ip, requestType, requestContent, "Neuspjela autentifikacija", start);
                 return kreirajJSONParkiraliste(new ArrayList<Parkiraliste>(), true, "Neuspjela autentifikacija");
             }
@@ -298,7 +430,6 @@ public class Application1REST {
                 naziv = jsonObject.getString("naziv").trim();
                 adresa = jsonObject.getString("adresa").trim();
                 ukupno = Integer.parseInt(jsonObject.getString("ukupnoMjesta").trim());
-                zauzeto = Integer.parseInt(jsonObject.getString("zauzetaMjesta").trim());
             } catch (NumberFormatException ex) {
                 saveToLog(username, url, ip, requestType, requestContent, "Neispravni tipovi podataka", start);
                 return kreirajJSONParkiraliste(new ArrayList<>(), true, "Neispravni tipovi podataka");
@@ -321,7 +452,7 @@ public class Application1REST {
             try {
                 ParkiranjeWSKlijenti.obrisiParkiralisteGrupe(nwtisKorIme, nwtisLozinka, id);
                 ParkiranjeWSKlijenti.dodajNovoParkiralisteGrupi(nwtisKorIme, nwtisLozinka, id, naziv, adresa, ukupno);
-                azurirajParkiraliste(naziv, adresa, ukupno, zauzeto, id);
+                azurirajParkiraliste(naziv, adresa, ukupno, id, idUser);
             } catch (Exception ex) {
                 saveToLog(username, url, ip, requestType, requestContent, ex.getMessage(), start);
                 return kreirajJSONParkiraliste(new ArrayList<>(), true, ex.getMessage());
@@ -379,12 +510,12 @@ public class Application1REST {
                 return kreirajJSONParkiraliste(new ArrayList<>(), true, "Neuspjela autentifikacija");
             }
             try {
-                if(obrisiParkiraliste(id, idUser) != 0){
+                if (obrisiParkiraliste(id, idUser) != 0) {
                     ParkiranjeWSKlijenti.obrisiParkiralisteGrupe(nwtisKorIme, nwtisLozinka, id);
-                }else{
-                     saveToLog(username, url, ip, requestType, requestContent, "Neuspjelo brisanje parkirališta", start);
-                     return kreirajJSONParkiraliste(new ArrayList<>(), true, "Neuspjelo brisanje parkirališta");
-                }               
+                } else {
+                    saveToLog(username, url, ip, requestType, requestContent, "Neuspjelo brisanje parkirališta", start);
+                    return kreirajJSONParkiraliste(new ArrayList<>(), true, "Neuspjelo brisanje parkirališta");
+                }
             } catch (Exception ex) {
                 saveToLog(username, url, ip, requestType, requestContent, "Neuspjelo brisanje parkirališta", start);
                 return kreirajJSONParkiraliste(new ArrayList<>(), true, "Neuspjelo brisanje parkirališta" + ex.getMessage());
@@ -449,8 +580,8 @@ public class Application1REST {
 
             ArrayList<Vozilo> vozila = (ArrayList) ParkiranjeWSKlijenti.dajSvaVozilaParkiralistaGrupe(nwtisKorIme, nwtisLozinka, id);
             if (vozila.isEmpty()) {
-                saveToLog(username, url, ip, requestType, requestContent, "Parkiraliste ne postoji", start);
-                return kreirajJSONVozila(vozila, true, "Parkiraliste ne postoji");
+                saveToLog(username, url, ip, requestType, requestContent, "Parkiraliste nema vozila", start);
+                return kreirajJSONVozila(vozila, true, "Parkiraliste nema vozila");
             }
             saveToLog(username, url, ip, requestType, requestContent, "OK", start);
             return kreirajJSONVozila(vozila, false, "OK");
@@ -460,7 +591,7 @@ public class Application1REST {
         }
     }
 
-    private int dodajParkiraliste(String naziv, String adresa, int ukupno, int zauzeto, int idUser) throws Exception {
+    private int dodajParkiraliste(String naziv, String adresa, int ukupno, int idUser) throws Exception {
         float latitude;
         float longitude;
         try {
@@ -473,7 +604,7 @@ public class Application1REST {
         }
 
         String sql = "INSERT INTO parkiralista (id, naziv, adresa, latitude, longitude, "
-                + "ukupno_mjesta, zauzeta_mjesta, korisnik_id) VALUES  (DEFAULT, ?,?,?,?,?,?,?);";
+                + "ukupno_mjesta, idKorisnik) VALUES  (DEFAULT, ?,?,?,?,?,?);";
         try (Connection conn = BazaPodataka.getConnection();
                 PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             ps.setString(1, naziv);
@@ -481,8 +612,7 @@ public class Application1REST {
             ps.setFloat(3, latitude);
             ps.setFloat(4, longitude);
             ps.setInt(5, ukupno);
-            ps.setInt(6, zauzeto);
-            ps.setInt(7, idUser);
+            ps.setInt(6, idUser);
             ps.executeUpdate();
             ResultSet rs = ps.getGeneratedKeys();
             rs.next();
@@ -493,7 +623,8 @@ public class Application1REST {
         }
     }
 
-    private void azurirajParkiraliste(String naziv, String adresa, int ukupno, int zauzeto, int id) throws Exception {
+    private void azurirajParkiraliste(String naziv, String adresa, int ukupno, 
+            int idParkiraliste, int idUser) throws Exception {
         float latitude;
         float longitude;
         try {
@@ -506,7 +637,7 @@ public class Application1REST {
         }
 
         String sql = "UPDATE parkiralista SET naziv = ?, adresa = ?, latitude = ?, "
-                + "longitude = ?, ukupno_mjesta = ?, zauzeta_mjesta = ? WHERE id = ?";
+                + "longitude = ?, ukupno_mjesta = ? WHERE id = ? AND idKorisnik = ?";
         try (Connection conn = BazaPodataka.getConnection();
                 PreparedStatement ps = conn.prepareCall(sql)) {
             ps.setString(1, naziv);
@@ -514,8 +645,8 @@ public class Application1REST {
             ps.setFloat(3, latitude);
             ps.setFloat(4, longitude);
             ps.setInt(5, ukupno);
-            ps.setInt(6, zauzeto);
-            ps.setInt(7, id);
+            ps.setInt(6, idParkiraliste);
+            ps.setInt(7, idUser);
             ps.executeUpdate();
         } catch (SQLException ex) {
             Logger.getLogger(Application1REST.class.getName()).log(Level.SEVERE, null, ex);
@@ -541,7 +672,7 @@ public class Application1REST {
         try (Connection conn = BazaPodataka.getConnection();
                 PreparedStatement ps = conn.prepareStatement(sql);) {
             ps.setInt(1, id);
-            ps.setInt(2,idUser);
+            ps.setInt(2, idUser);
             ResultSet rs = ps.executeQuery();
             return rs.next();
         } catch (SQLException ex) {
@@ -572,7 +703,7 @@ public class Application1REST {
             jsonParkiraliste.add("adresa", p.getAdresa());
             jsonParkiraliste.add("latitude", p.getGeoloc().getLatitude());
             jsonParkiraliste.add("longitude", p.getGeoloc().getLongitude());
-
+            jsonParkiraliste.add("brojParkirnihMjesta", p.getBrojParkirnihMjesta());
             jsonArrayParkiralista.add(jsonParkiraliste);
         }
         json.add("odgovor", jsonArrayParkiralista);

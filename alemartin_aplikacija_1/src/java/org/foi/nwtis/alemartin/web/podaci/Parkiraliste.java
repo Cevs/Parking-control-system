@@ -17,6 +17,9 @@ public class Parkiraliste {
     private String naziv;
     private String adresa;
     private Lokacija geoloc;
+    private int brojParkirnihMjesta;
+    private int brojZauzetihMjesta;
+    private int korisnikId;
 
     public Parkiraliste() {
     }
@@ -26,6 +29,16 @@ public class Parkiraliste {
         this.naziv = naziv;
         this.adresa = adresa;
         this.geoloc = geoloc;
+    }
+    
+    public Parkiraliste(int id, String naziv, String adresa, Lokacija geoloc, int brojParkirnihMjesta, int brojZauzetihMjesta, int korisnikId) {
+        this.id = id;
+        this.naziv = naziv;
+        this.adresa = adresa;
+        this.geoloc = geoloc;
+        this.brojParkirnihMjesta = brojParkirnihMjesta;
+        this.brojZauzetihMjesta = brojZauzetihMjesta;
+        this.korisnikId = korisnikId;
     }
 
     public Lokacija getGeoloc() {
@@ -59,4 +72,30 @@ public class Parkiraliste {
     public void setAdresa(String adresa) {
         this.adresa = adresa;
     }        
+
+    public int getBrojParkirnihMjesta() {
+        return brojParkirnihMjesta;
+    }
+
+    public void setBrojParkirnihMjesta(int brojParkirnihMjesta) {
+        this.brojParkirnihMjesta = brojParkirnihMjesta;
+    }
+
+    public int getBrojZauzetihMjesta() {
+        return brojZauzetihMjesta;
+    }
+
+    public void setBrojZauzetihMjesta(int brojZauzetihMjesta) {
+        this.brojZauzetihMjesta = brojZauzetihMjesta;
+    }
+
+    public int getKorisnikId() {
+        return korisnikId;
+    }
+
+    public void setKorisnikId(int korisnikId) {
+        this.korisnikId = korisnikId;
+    }
+    
+    
 }

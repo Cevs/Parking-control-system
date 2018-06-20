@@ -76,5 +76,31 @@ public class ParkiranjeWSKlijenti {
         org.foi.nwtis.alemartin.ws.klijenti.Parkiranje port = service.getParkiranjePort();
         return port.dajSvaParkiralistaGrupe(korisnickoIme, korisnickaLozinka);
     }
+
+    public static StatusParkiralista dajStatusParkiralistaGrupe(java.lang.String korisnickoIme, java.lang.String korisnickaLozinka, int idParkiraliste) {
+        org.foi.nwtis.alemartin.ws.klijenti.Parkiranje_Service service = new org.foi.nwtis.alemartin.ws.klijenti.Parkiranje_Service();
+        org.foi.nwtis.alemartin.ws.klijenti.Parkiranje port = service.getParkiranjePort();
+        return port.dajStatusParkiralistaGrupe(korisnickoIme, korisnickaLozinka, idParkiraliste);
+    }
+
+    public static boolean aktivirajParkiralisteGrupe(java.lang.String korisnickoIme, java.lang.String korisnickaLozinka, int idParkiraliste) {
+        org.foi.nwtis.alemartin.ws.klijenti.Parkiranje_Service service = new org.foi.nwtis.alemartin.ws.klijenti.Parkiranje_Service();
+        org.foi.nwtis.alemartin.ws.klijenti.Parkiranje port = service.getParkiranjePort();
+        return port.aktivirajParkiralisteGrupe(korisnickoIme, korisnickaLozinka, idParkiraliste);
+    }
+
+    public static boolean blokirajParkiralisteGrupe(java.lang.String korisnickoIme, java.lang.String korisnickaLozinka, int idParkiraliste) {
+        org.foi.nwtis.alemartin.ws.klijenti.Parkiranje_Service service = new org.foi.nwtis.alemartin.ws.klijenti.Parkiranje_Service();
+        org.foi.nwtis.alemartin.ws.klijenti.Parkiranje port = service.getParkiranjePort();
+        return port.blokirajParkiralisteGrupe(korisnickoIme, korisnickaLozinka, idParkiraliste);
+    }
+
+    public static Boolean obrisiSvaParkiralistaGrupe(java.lang.String korisnickoIme, java.lang.String korisnickaLozinka) {
+        org.foi.nwtis.alemartin.ws.klijenti.Parkiranje_Service service = new org.foi.nwtis.alemartin.ws.klijenti.Parkiranje_Service();
+        org.foi.nwtis.alemartin.ws.klijenti.Parkiranje port = service.getParkiranjePort();
+        return port.obrisiSvaParkiralistaGrupe(korisnickoIme, korisnickaLozinka);
+    }
+    
+    
    
 }

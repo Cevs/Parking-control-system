@@ -41,4 +41,7 @@ public class Index implements Serializable {
         return "log";
     }
     
+    public String parkings(){
+        return "parkings";
+    }
 }

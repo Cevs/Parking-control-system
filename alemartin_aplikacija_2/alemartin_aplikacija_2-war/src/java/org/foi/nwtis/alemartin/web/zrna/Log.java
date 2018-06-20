@@ -152,4 +152,8 @@ public class Log {
     public String inbox() {
         return "inbox";
     }
+    
+    public String parkings(){
+        return "parkings";
+    }
 }

@@ -54,6 +54,12 @@
             <to-view-id>/log.xhtml</to-view-id>
             <redirect/>
         </navigation-case>
+        <navigation-case>
+            <from-action>#{index.parkings()}</from-action>
+            <from-outcome>parkings</from-outcome>
+            <to-view-id>/parkings.xhtml</to-view-id>
+            <redirect/>
+        </navigation-case>
     </navigation-rule>
     
     <navigation-rule>
@@ -80,6 +86,12 @@
             <from-action>#{status.log()}</from-action>
             <from-outcome>log</from-outcome>
             <to-view-id>/log.xhtml</to-view-id>
+            <redirect/>
+        </navigation-case>
+        <navigation-case>
+            <from-action>#{status.parkings()}</from-action>
+            <from-outcome>parkings</from-outcome>
+            <to-view-id>/parkings.xhtml</to-view-id>
             <redirect/>
         </navigation-case>
     </navigation-rule>
@@ -110,6 +122,12 @@
             <to-view-id>/log.xhtml</to-view-id>
             <redirect/>
         </navigation-case>
+        <navigation-case>
+            <from-action>#{profile.parkings()}</from-action>
+            <from-outcome>parkings</from-outcome>
+            <to-view-id>/parkings.xhtml</to-view-id>
+            <redirect/>
+        </navigation-case>
     </navigation-rule>
     
     <navigation-rule>
@@ -138,7 +156,14 @@
             <to-view-id>/log.xhtml</to-view-id>
             <redirect/>
         </navigation-case>
+        <navigation-case>
+            <from-action>#{inbox.parkings()}</from-action>
+            <from-outcome>parkings</from-outcome>
+            <to-view-id>/parkings.xhtml</to-view-id>
+            <redirect/>
+        </navigation-case>
     </navigation-rule>
+    
     <navigation-rule>
         <from-view-id>/log.xhtml</from-view-id>
         <navigation-case>
@@ -163,6 +188,45 @@
             <from-action>#{log.inbox()}</from-action>
             <from-outcome>inbox</from-outcome>
             <to-view-id>/inbox.xhtml</to-view-id>
+            <redirect/>
+        </navigation-case>
+        <navigation-case>
+            <from-action>#{log.parkings()}</from-action>
+            <from-outcome>parkings</from-outcome>
+            <to-view-id>/parkings.xhtml</to-view-id>
+            <redirect/>
+        </navigation-case>
+    </navigation-rule>
+    <navigation-rule>
+        <from-view-id>/parkings.xhtml</from-view-id>
+        <navigation-case>
+            <from-action>#{parkings.home()}</from-action>
+            <from-outcome>home</from-outcome>
+            <to-view-id>/index.xhtml</to-view-id>
+            <redirect/>
+        </navigation-case>
+        <navigation-case>
+            <from-action>#{parkings.profile()}</from-action>
+            <from-outcome>profile</from-outcome>
+            <to-view-id>/profile.xhtml</to-view-id>
+            <redirect/>
+        </navigation-case>
+        <navigation-case>
+            <from-action>#{parkings.status()}</from-action>
+            <from-outcome>status</from-outcome>
+            <to-view-id>/status.xhtml</to-view-id>
+            <redirect/>
+        </navigation-case>
+        <navigation-case>
+            <from-action>#{parkings.inbox()}</from-action>
+            <from-outcome>inbox</from-outcome>
+            <to-view-id>/inbox.xhtml</to-view-id>
+            <redirect/>
+        </navigation-case>
+        <navigation-case>
+            <from-action>#{parkings.log()}</from-action>
+            <from-outcome>log</from-outcome>
+            <to-view-id>/log.xhtml</to-view-id>
             <redirect/>
         </navigation-case>
     </navigation-rule>

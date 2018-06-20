@@ -60,7 +60,7 @@ public class GeoMeteoWS {
                         = new MeteoPodaci(new Date(), new Date(), rs.getFloat("temp"), rs.getFloat("tempMin"),
                                 rs.getFloat("tempMax"), "celsiuses", rs.getFloat("vlaga"), "%", rs.getFloat("tlak"), "hPa",
                                 rs.getFloat("vjetar"), "ms", rs.getFloat("vjetarSmjer"), "", "", -1, "", "", 0.0f,
-                                "", "", -1, "", "", rs.getTimestamp("preuzeto"));
+                                "", "", -1, rs.getString("vrijeme"), "", rs.getTimestamp("preuzeto"));
                 return mp;
             }
         } catch (SQLException ex) {
