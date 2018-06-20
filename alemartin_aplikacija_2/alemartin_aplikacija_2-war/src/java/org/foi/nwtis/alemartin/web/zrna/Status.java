@@ -175,4 +175,8 @@ public class Status implements Serializable {
     public String parkings(){
         return "parkings";
     }
+    
+    public String mqtt(){
+        return "mqtt";
+    }
 }

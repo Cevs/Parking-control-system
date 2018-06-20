@@ -5,26 +5,19 @@
  */
 package org.foi.nwtis.alemartin.web.zrna;
 
+import javax.inject.Named;
+import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.annotation.ManagedBean;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
-import javax.inject.Named;
 import javax.enterprise.context.RequestScoped;
-import javax.enterprise.context.SessionScoped;
 import javax.faces.context.FacesContext;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
-import org.foi.nwtis.alemartin.ejb.eb.Dnevnik;
-import org.foi.nwtis.alemartin.ejb.sb.DnevnikFacade;
-
+import org.foi.nwtis.alemartin.ejb.eb.MqttPoruke;
+import org.foi.nwtis.alemartin.ejb.sb.MqttPorukeFacade;
 import org.foi.nwtis.alemartin.konfiguracije.Konfiguracija;
 import org.foi.nwtis.alemartin.web.utils.SessionUtils;
 
@@ -32,56 +25,53 @@ import org.foi.nwtis.alemartin.web.utils.SessionUtils;
  *
  * @author TOSHIBA
  */
-@Named(value = "log")
+@Named(value = "mqtt")
 @RequestScoped
-public class Log {
+public class Mqtt implements Serializable {
 
     @EJB
-    private DnevnikFacade dnevnikFacade;
+    private MqttPorukeFacade mqttPorukeFacade;
 
     private int numberOfRecords;
     private int pageIndex;
     private int lastPageIndex;
 
     private int recordsPerPage;
-    private List<Dnevnik> logList = new ArrayList<>();
+    private List<MqttPoruke> listMqtt = new ArrayList<>();
 
     private boolean showButtonNext;
     private boolean showButtonPrevious;
 
     private HttpSession session;
 
-    
-    public Log() {
+    public Mqtt() {
     }
 
     @PostConstruct
-    public void init() {
+    private void init() {
         ServletContext sc = (ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext();
         Konfiguracija config = (Konfiguracija) sc.getAttribute("konfiguracija_aplikacije");
         recordsPerPage = Integer.parseInt(config.dajPostavku("stranicenje.brojZapisa"));
         session = SessionUtils.getSession();
-        getSessionData();      
-        getLogRecords(); 
+        fetchMqttMessages();
         refreshView();
     }
 
     private void getSessionData() {
-        if (session.getAttribute("pageIndexLog") == null) {
+        if (session.getAttribute("pageIndexMqtt") == null) {
             pageIndex = 0;
-            session.setAttribute("pageIndexLog", pageIndex);
+            session.setAttribute("pageIndexMqtt", pageIndex);
         } else {
-            pageIndex = (int) session.getAttribute("pageIndexLog");
-        }                   
+            pageIndex = (int) session.getAttribute("pageIndexMqtt");
+        }
     }
 
-    private void getLogRecords() {
+    private void fetchMqttMessages() {
         int offset = pageIndex * recordsPerPage;
         int[] range = {offset, (offset + recordsPerPage - 1)};
-        logList.clear();
-        logList = dnevnikFacade.findRange(range);
-        numberOfRecords = dnevnikFacade.findAll().size();
-        lastPageIndex = (int) Math.ceil((double) numberOfRecords / recordsPerPage);
+        listMqtt.clear();
+        listMqtt = mqttPorukeFacade.findRangeByUser(range, SessionUtils.getUsername());
+        refreshView();
     }
 
     private void refreshView() {
@@ -100,24 +90,31 @@ public class Log {
         }
     }
 
-   
+    public void deelteRecords() {
+        List<MqttPoruke> mqttMessages = mqttPorukeFacade.findAll();
+        for (MqttPoruke mqtt : mqttMessages) {
+            mqttPorukeFacade.remove(mqtt);
+        }
+    }
 
     public void nextPage() {
         session.setAttribute("pageIndexLog", ++pageIndex);
+        fetchMqttMessages();
         refreshView();
     }
 
     public void previousPage() {
         session.setAttribute("pageIndexLog", --pageIndex);
+        fetchMqttMessages();
         refreshView();
     }
 
-    public List<Dnevnik> getLogList() {
-        return logList;
+    public List<MqttPoruke> getListMqtt() {
+        return listMqtt;
     }
 
-    public void setLogList(List<Dnevnik> logList) {
-        this.logList = logList;
+    public void setListMqtt(List<MqttPoruke> listMqtt) {
+        this.listMqtt = listMqtt;
     }
 
     public boolean isShowButtonNext() {
@@ -152,12 +149,12 @@ public class Log {
     public String inbox() {
         return "inbox";
     }
-    
-    public String parkings(){
-        return "parkings";
+
+    public String log() {
+        return "log";
     }
-    
-    public String mqtt(){
-        return "mqtt";
+
+    public String parkings() {
+        return "parkings";
     }
 }

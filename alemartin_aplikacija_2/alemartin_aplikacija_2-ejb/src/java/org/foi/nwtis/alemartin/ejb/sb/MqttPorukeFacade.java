@@ -5,9 +5,13 @@
  */
 package org.foi.nwtis.alemartin.ejb.sb;
 
+import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 import org.foi.nwtis.alemartin.ejb.eb.MqttPoruke;
 
 /**
@@ -28,5 +32,16 @@ public class MqttPorukeFacade extends AbstractFacade<MqttPoruke> {
     public MqttPorukeFacade() {
         super(MqttPoruke.class);
     }
-    
+
+    public List<MqttPoruke> findRangeByUser(int[] range, String korisnik) {
+        CriteriaBuilder cb = getEntityManager().getCriteriaBuilder();
+        CriteriaQuery cq = cb.createQuery();
+        Root<MqttPoruke> mqttPoruke = cq.from(MqttPoruke.class);
+        cq.where(cb.equal(mqttPoruke.get("korisnik"), korisnik));
+        javax.persistence.Query q = getEntityManager().createQuery(cq);
+        q.setMaxResults(range[1] - range[0] + 1);
+        q.setFirstResult(range[0]);
+        return q.getResultList();
+    }
+
 }

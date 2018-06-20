@@ -387,5 +387,9 @@ public class Parkings implements Serializable {
     public String log() {
         return "log";
     }
+    
+    public String mqtt(){
+        return "mqtt";
+    }
 
 }

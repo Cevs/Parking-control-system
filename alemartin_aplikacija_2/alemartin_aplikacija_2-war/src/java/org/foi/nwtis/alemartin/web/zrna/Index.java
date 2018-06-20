@@ -44,4 +44,8 @@ public class Index implements Serializable {
     public String parkings(){
         return "parkings";
     }
+    
+    public String mqtt(){
+        return "mqtt";
+    }
 }

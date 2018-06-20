@@ -60,6 +60,12 @@
             <to-view-id>/parkings.xhtml</to-view-id>
             <redirect/>
         </navigation-case>
+        <navigation-case>
+            <from-action>#{index.mqtt()}</from-action>
+            <from-outcome>mqtt</from-outcome>
+            <to-view-id>/mqtt.xhtml</to-view-id>
+            <redirect/>
+        </navigation-case>
     </navigation-rule>
     
     <navigation-rule>
@@ -92,6 +98,12 @@
             <from-action>#{status.parkings()}</from-action>
             <from-outcome>parkings</from-outcome>
             <to-view-id>/parkings.xhtml</to-view-id>
+            <redirect/>
+        </navigation-case>
+        <navigation-case>
+            <from-action>#{status.mqtt()}</from-action>
+            <from-outcome>mqtt</from-outcome>
+            <to-view-id>/mqtt.xhtml</to-view-id>
             <redirect/>
         </navigation-case>
     </navigation-rule>
@@ -128,6 +140,12 @@
             <to-view-id>/parkings.xhtml</to-view-id>
             <redirect/>
         </navigation-case>
+        <navigation-case>
+            <from-action>#{profile.mqtt()}</from-action>
+            <from-outcome>mqtt</from-outcome>
+            <to-view-id>/mqtt.xhtml</to-view-id>
+            <redirect/>
+        </navigation-case>
     </navigation-rule>
     
     <navigation-rule>
@@ -160,6 +178,12 @@
             <from-action>#{inbox.parkings()}</from-action>
             <from-outcome>parkings</from-outcome>
             <to-view-id>/parkings.xhtml</to-view-id>
+            <redirect/>
+        </navigation-case>
+        <navigation-case>
+            <from-action>#{inbox.mqtt()}</from-action>
+            <from-outcome>mqtt</from-outcome>
+            <to-view-id>/mqtt.xhtml</to-view-id>
             <redirect/>
         </navigation-case>
     </navigation-rule>
@@ -196,6 +220,12 @@
             <to-view-id>/parkings.xhtml</to-view-id>
             <redirect/>
         </navigation-case>
+        <navigation-case>
+            <from-action>#{log.mqtt()}</from-action>
+            <from-outcome>mqtt</from-outcome>
+            <to-view-id>/mqtt.xhtml</to-view-id>
+            <redirect/>
+        </navigation-case>
     </navigation-rule>
     <navigation-rule>
         <from-view-id>/parkings.xhtml</from-view-id>
@@ -227,6 +257,51 @@
             <from-action>#{parkings.log()}</from-action>
             <from-outcome>log</from-outcome>
             <to-view-id>/log.xhtml</to-view-id>
+            <redirect/>
+        </navigation-case>
+        <navigation-case>
+            <from-action>#{parkings.mqtt()}</from-action>
+            <from-outcome>mqtt</from-outcome>
+            <to-view-id>/mqtt.xhtml</to-view-id>
+            <redirect/>
+        </navigation-case>
+    </navigation-rule>
+    <navigation-rule>
+        <from-view-id>/mqtt.xhtml</from-view-id>
+        <navigation-case>
+            <from-action>#{mqtt.home()}</from-action>
+            <from-outcome>home</from-outcome>
+            <to-view-id>/index.xhtml</to-view-id>
+            <redirect/>
+        </navigation-case>
+        <navigation-case>
+            <from-action>#{mqtt.profile()}</from-action>
+            <from-outcome>profile</from-outcome>
+            <to-view-id>/profile.xhtml</to-view-id>
+            <redirect/>
+        </navigation-case>
+        <navigation-case>
+            <from-action>#{mqtt.status()}</from-action>
+            <from-outcome>status</from-outcome>
+            <to-view-id>/status.xhtml</to-view-id>
+            <redirect/>
+        </navigation-case>
+        <navigation-case>
+            <from-action>#{mqtt.inbox()}</from-action>
+            <from-outcome>inbox</from-outcome>
+            <to-view-id>/inbox.xhtml</to-view-id>
+            <redirect/>
+        </navigation-case>
+        <navigation-case>
+            <from-action>#{mqtt.log()}</from-action>
+            <from-outcome>log</from-outcome>
+            <to-view-id>/log.xhtml</to-view-id>
+            <redirect/>
+        </navigation-case>
+        <navigation-case>
+            <from-action>#{mqtt.parkings()}</from-action>
+            <from-outcome>parkings</from-outcome>
+            <to-view-id>/parkings.xhtml</to-view-id>
             <redirect/>
         </navigation-case>
     </navigation-rule>
