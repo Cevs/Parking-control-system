@@ -108,9 +108,9 @@ and open the template in the editor.
                                         <td>
                                             <h:selectOneListbox id="listParking" size = "10" value="#{parkings.selectedParking}">
                                                 <f:selectItems value="#{parkings.parkingList}" 
-                                                               var="p" 
-                                                               itemLabel="#{p.name} : #{p.address}" 
-                                                               itemValue="#{p.id}" />
+                                                               var="park" 
+                                                               itemLabel="#{park.name} : #{park.address}" 
+                                                               itemValue="#{park.id}" />
                                                 <f:ajax event="change" listener="#{parkings.selectParking()}" render="parkingName parkingAddress parkingSlots messageError messageSuccess messageInfo messageAddError messageAddSuccess vehicles meteo"/>
                                             </h:selectOneListbox>
                                         </td>
